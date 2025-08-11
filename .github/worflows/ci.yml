@@ -1,0 +1,72 @@
+name: CI
+
+on: [push]
+
+jobs:
+
+  test:
+    name: Testing
+    runs-on: ubuntu-latest
+    steps:
+      - 
+        name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - 
+        name: Checkout repository
+        uses: actions/checkout@v4
+      - 
+        name: Install UV
+        uses: astral-sh/setup-uv@v6
+      - 
+        name: Load cached venv
+        uses: actions/cache@v4
+        with:
+            path: /tmp/.uv-cache
+            key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+            restore-keys: |
+              uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+              uv-${{ runner.os }}
+      - 
+        name: Install dependencies
+        run: uv sync --all-extras --dev
+      -
+        name: Run test
+        run: uv run make test
+      -
+        name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: coverage.xml
+
+  lint:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - 
+        name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - 
+        name: Checkout repository
+        uses: actions/checkout@v4
+      - 
+        name: Install UV
+        uses: astral-sh/setup-uv@v6
+      - 
+        name: Load cached venv
+        uses: actions/cache@v4
+        with:
+            path: /tmp/.uv-cache
+            key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+            restore-keys: |
+              uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+              uv-${{ runner.os }}
+      - 
+        name: Install dependencies
+        run: uv sync --all-extras --dev
+      -
+        name: Run lint
+        run: uv run make lint
