@@ -3,9 +3,9 @@
 ## Prerequisites
 
 First, you need to have installed in your computer:
-    - [Python 3.13 or higher](https://www.python.org/downloads/)
-    - [UV](https://docs.astral.sh/uv/getting-started/installation/) (Package Manager)
-    - [Make](https://www.gnu.org/software/make/) (Tasks Automation)
+- [Python 3.13 or higher](https://www.python.org/downloads/)
+- [UV](https://docs.astral.sh/uv/getting-started/installation/) (Package Manager)
+- [Make](https://www.gnu.org/software/make/) (Tasks Automation)
 
 ## Configuration
 
