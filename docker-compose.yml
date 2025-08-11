@@ -9,3 +9,5 @@ services:
             POSTGRES_USER: $DB_USER
             POSTGRES_PASSWORD: $DB_PASSWORD
         restart: always
+        volumes:
+          - ./scripts/database.sql:/docker-entrypoint-initdb.d/database.sql
