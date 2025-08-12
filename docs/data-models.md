@@ -1,9 +1,5 @@
 # Data Model
 
-## Extensions
-
-* `pgcrypto` extension for UUID generation (`gen_random_uuid()` function).
-
 ## Enumerations
 
 ### `user_role`
@@ -18,7 +14,7 @@
 
 | Column      | Type         | Constraints                     | Description                |
 | ----------- | ------------ | ------------------------------- | -------------------------- |
-| id          | UUID         | PK, default `gen_random_uuid()` | Unique user identifier     |
+| id          | UUID         | PK                              | Unique user identifier     |
 | name        | VARCHAR(100) | NOT NULL                        | User's name                |
 | email       | VARCHAR(100) | UNIQUE, NOT NULL                | User's email               |
 | password    | VARCHAR(255) | NOT NULL                        | User's password            |
@@ -31,7 +27,7 @@
 
 | Column      | Type         | Constraints                     | Description          |
 | ----------- | ------------ | ------------------------------- | -------------------- |
-| id          | UUID         | PK, default `gen_random_uuid()` | College identifier   |
+| id          | UUID         | PK                              | College identifier   |
 | name        | VARCHAR(255) | NOT NULL                        | College name         |
 | description | TEXT         |                                 | College description  |
 | image\_url  | TEXT         |                                 | URL to college image |
@@ -42,7 +38,7 @@
 
 | Column      | Type         | Constraints                              | Description        |
 | ----------- | ------------ | ---------------------------------------- | ------------------ |
-| id          | UUID         | PK, default `gen_random_uuid()`          | Class identifier   |
+| id          | UUID         | PK                                       | Class identifier   |
 | name        | VARCHAR(255) | NOT NULL                                 | Class name         |
 | description | TEXT         |                                          | Class description  |
 | college\_id | UUID         | FK to `colleges(id)`, ON DELETE SET NULL | Associated college |
@@ -54,7 +50,7 @@
 
 | Column            | Type         | Constraints                              | Description            |
 | ----------------- | ------------ | ---------------------------------------- | ---------------------- |
-| id                | UUID         | PK, default `gen_random_uuid()`          | Character identifier   |
+| id                | UUID         | PK                                       | Character identifier   |
 | user\_id          | UUID         | FK to `users(id)`, ON DELETE CASCADE     | Owning user            |
 | name              | VARCHAR(255) | NOT NULL                                 | Character name         |
 | image\_url        | TEXT         |                                          | URL to character image |
@@ -69,9 +65,9 @@
 
 | Column        | Type  | Constraints                                      | Description               |
 | ------------- | ----- | ------------------------------------------------ | ------------------------- |
-| id            | UUID  | PK, default `gen_random_uuid()`                  | Inventory item identifier |
+| id            | UUID  | PK                                               | Inventory item identifier |
 | character\_id | UUID  | FK to `player_characters(id)`, ON DELETE CASCADE | Owner character           |
-| item\_id      | UUID  | Default `gen_random_uuid()`                      | Item identifier           |
+| item\_id      | UUID  |                                                  | Item identifier           |
 | amount        | INT   |                                                  | Quantity                  |
 | metadata      | JSONB |                                                  | Additional metadata       |
 
@@ -81,7 +77,7 @@
 
 | Column               | Type      | Constraints                                      | Description                |
 | -------------------- | --------- | ------------------------------------------------ | -------------------------- |
-| id                   | UUID      | PK, default `gen_random_uuid()`                  | Character sheet identifier |
+| id                   | UUID      | PK                                               | Character sheet identifier |
 | character\_id        | UUID      | FK to `player_characters(id)`, ON DELETE CASCADE | Associated character       |
 | strength             | INTEGER   |                                                  | Strength                   |
 | dexterity            | INTEGER   |                                                  | Dexterity                  |
@@ -122,7 +118,7 @@
 
 | Column      | Type         | Constraints                     | Description         |
 | ----------- | ------------ | ------------------------------- | ------------------- |
-| id          | UUID         | PK, default `gen_random_uuid()` | NPC identifier      |
+| id          | UUID         | PK                              | NPC identifier      |
 | name        | VARCHAR(255) | NOT NULL                        | NPC name            |
 | image\_url  | TEXT         |                                 | NPC image URL       |
 | bio         | TEXT         |                                 | NPC biography       |
@@ -135,7 +131,7 @@
 
 | Column        | Type | Constraints                                      | Description                  |
 | ------------- | ---- | ------------------------------------------------ | ---------------------------- |
-| id            | UUID | PK, default `gen_random_uuid()`                  | Reputation record identifier |
+| id            | UUID | PK                                               | Reputation record identifier |
 | character\_id | UUID | FK to `player_characters(id)`, ON DELETE CASCADE | Character                    |
 | npc\_id       | UUID | FK to `npcs(id)`, ON DELETE CASCADE              | NPC                          |
 | score         | INT  |                                                  | Reputation score             |
@@ -146,7 +142,7 @@
 
 | Column           | Type      | Constraints                          | Description        |
 | ---------------- | --------- | ------------------------------------ | ------------------ |
-| id               | UUID      | PK, default `gen_random_uuid()`      | Note identifier    |
+| id               | UUID      | PK                                   | Note identifier    |
 | author\_id       | UUID      | FK to `users(id)`, ON DELETE CASCADE | Note author        |
 | content          | TEXT      | NOT NULL                             | Note content       |
 | is\_master\_only | BOOLEAN   | Default FALSE                        | Master-only flag   |
@@ -183,7 +179,7 @@
 
 | Column         | Type         | Constraints                     | Description           |
 | -------------- | ------------ | ------------------------------- | --------------------- |
-| id             | UUID         | PK, default `gen_random_uuid()` | Event identifier      |
+| id             | UUID         | PK                              | Event identifier      |
 | title          | VARCHAR(255) | NOT NULL                        | Event title           |
 | description    | TEXT         |                                 | Event description     |
 | game\_datetime | TIMESTAMP    |                                 | In-game date and time |
@@ -207,7 +203,7 @@
 
 | Column      | Type         | Constraints                     | Description       |
 | ----------- | ------------ | ------------------------------- | ----------------- |
-| id          | UUID         | PK, default `gen_random_uuid()` | Store identifier  |
+| id          | UUID         | PK                              | Store identifier  |
 | name        | VARCHAR(255) | NOT NULL                        | Store name        |
 | location    | VARCHAR(255) |                                 | Store location    |
 | description | TEXT         |                                 | Store description |
@@ -219,7 +215,7 @@
 
 | Column      | Type          | Constraints                           | Description           |
 | ----------- | ------------- | ------------------------------------- | --------------------- |
-| id          | UUID          | PK, default `gen_random_uuid()`       | Store item identifier |
+| id          | UUID          | PK                                    | Store item identifier |
 | store\_id   | UUID          | FK to `stores(id)`, ON DELETE CASCADE | Associated store      |
 | name        | VARCHAR(255)  | NOT NULL                              | Item name             |
 | description | TEXT          |                                       | Item description      |
@@ -232,7 +228,7 @@
 
 | Column     | Type         | Constraints                     | Description     |
 | ---------- | ------------ | ------------------------------- | --------------- |
-| id         | UUID         | PK, default `gen_random_uuid()` | Book identifier |
+| id         | UUID         | PK                              | Book identifier |
 | title      | VARCHAR(255) | NOT NULL                        | Book title      |
 | summary    | TEXT         |                                 | Book summary    |
 | section    | VARCHAR(255) |                                 | Book section    |
@@ -245,7 +241,7 @@
 
 | Column         | Type         | Constraints                     | Description           |
 | -------------- | ------------ | ------------------------------- | --------------------- |
-| id             | UUID         | PK, default `gen_random_uuid()` | News identifier       |
+| id             | UUID         | PK                              | News identifier       |
 | headline       | VARCHAR(255) | NOT NULL                        | News headline         |
 | body           | TEXT         |                                 | News body             |
 | game\_datetime | TIMESTAMP    |                                 | In-game date and time |
@@ -257,7 +253,7 @@
 
 | Column     | Type         | Constraints                     | Description    |
 | ---------- | ------------ | ------------------------------- | -------------- |
-| id         | UUID         | PK, default `gen_random_uuid()` | Map identifier |
+| id         | UUID         | PK                              | Map identifier |
 | title      | VARCHAR(255) | NOT NULL                        | Map title      |
 | image\_url | TEXT         |                                 | Map image URL  |
 
@@ -267,7 +263,7 @@
 
 | Column             | Type         | Constraints                     | Description        |
 | ------------------ | ------------ | ------------------------------- | ------------------ |
-| id                 | UUID         | PK, default `gen_random_uuid()` | Monster identifier |
+| id                 | UUID         | PK                              | Monster identifier |
 | name               | VARCHAR(255) | NOT NULL                        | Monster name       |
 | hit\_points        | INT          |                                 | Hit points         |
 | experience\_points | INT          |                                 | Experience points  |

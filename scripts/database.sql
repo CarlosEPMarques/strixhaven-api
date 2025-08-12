@@ -1,10 +1,7 @@
--- Habilitar extensão para geração de UUIDs
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
 CREATE TYPE user_role AS ENUM ('DM', 'PLAYER');
 
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -13,14 +10,14 @@ CREATE TABLE users (
 );
 
 CREATE TABLE colleges (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     image_url TEXT
 );
 
 CREATE TABLE classes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
@@ -28,7 +25,7 @@ CREATE TABLE classes (
 );
 
 CREATE TABLE player_characters (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     image_url TEXT,
@@ -39,15 +36,15 @@ CREATE TABLE player_characters (
 );
 
 CREATE TABLE inventory_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
-    item_id UUID DEFAULT gen_random_uuid(),
+    item_id UUID,
     amount INT,
     metadata JSONB
 );
 
 CREATE TABLE character_sheet (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
     strength INTEGER,
     dexterity INTEGER,
@@ -84,7 +81,7 @@ CREATE TABLE character_sheet (
 );
 
 CREATE TABLE npcs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     image_url TEXT,
     bio TEXT,
@@ -93,14 +90,14 @@ CREATE TABLE npcs (
 );
 
 CREATE TABLE npcs_reputation (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
     npc_id UUID REFERENCES npcs(id) ON DELETE CASCADE,
     score INT
 );
 
 CREATE TABLE notes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     author_id UUID REFERENCES users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
     is_master_only BOOLEAN DEFAULT FALSE,
@@ -123,7 +120,7 @@ CREATE TABLE npc_notes (
 );
 
 CREATE TABLE calendar_notes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     game_datetime TIMESTAMP,
@@ -138,7 +135,7 @@ CREATE TABLE event_notes (
 );
 
 CREATE TABLE stores (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     location VARCHAR(255),
     description TEXT,
@@ -146,7 +143,7 @@ CREATE TABLE stores (
 );
 
 CREATE TABLE store_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     store_id UUID REFERENCES stores(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     description TEXT,
@@ -155,7 +152,7 @@ CREATE TABLE store_items (
 );
 
 CREATE TABLE books (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     summary TEXT,
     section VARCHAR(255),
@@ -164,7 +161,7 @@ CREATE TABLE books (
 );
 
 CREATE TABLE news (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     headline VARCHAR(255) NOT NULL,
     body TEXT,
     game_datetime TIMESTAMP,
@@ -172,13 +169,13 @@ CREATE TABLE news (
 );
 
 CREATE TABLE maps (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     image_url TEXT
 );
 
 CREATE TABLE monsters (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     hit_points INT,
     experience_points INT,
