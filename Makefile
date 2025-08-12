@@ -14,7 +14,7 @@ test:
 
 
 local/start: check_env
-	uvicorn src.main:app --port 8008 --reload
+	ENVIRONMENT=development uvicorn src.main:app --port 8008 --reload
 
 
 check_env:
