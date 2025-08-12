@@ -2,16 +2,16 @@ CREATE TYPE user_role AS ENUM ('DM', 'PLAYER');
 
 CREATE TABLE books (
     id UUID PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(100) NOT NULL,
     summary TEXT,
-    section VARCHAR(255),
+    section VARCHAR(100),
     is_hidden BOOLEAN DEFAULT FALSE,
     image_url TEXT
 );
 
 CREATE TABLE calendar_notes (
     id UUID PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(100) NOT NULL,
     description TEXT,
     game_datetime TIMESTAMP,
     is_exam BOOLEAN DEFAULT FALSE
@@ -62,7 +62,7 @@ CREATE TABLE character_sheet (
 
 CREATE TABLE classes (
     id UUID PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     description TEXT,
     college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
     image_url TEXT
@@ -70,7 +70,7 @@ CREATE TABLE classes (
 
 CREATE TABLE colleges (
     id UUID PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     description TEXT,
     image_url TEXT
 );
@@ -92,13 +92,13 @@ CREATE TABLE inventory_items (
 
 CREATE TABLE maps (
     id UUID PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(100) NOT NULL,
     image_url TEXT
 );
 
 CREATE TABLE monsters (
     id UUID PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     hit_points INT,
     experience_points INT,
     strength INT,
@@ -114,7 +114,7 @@ CREATE TABLE monsters (
 
 CREATE TABLE news (
     id UUID PRIMARY KEY,
-    headline VARCHAR(255) NOT NULL,
+    headline VARCHAR(100) NOT NULL,
     body TEXT,
     game_datetime TIMESTAMP,
     image_url TEXT
@@ -146,7 +146,7 @@ CREATE TABLE npcs_reputation (
 
 CREATE TABLE npcs (
     id UUID PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     image_url TEXT,
     bio TEXT,
     is_visible BOOLEAN DEFAULT TRUE,
@@ -156,7 +156,7 @@ CREATE TABLE npcs (
 CREATE TABLE player_characters (
     id UUID PRIMARY KEY,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     image_url TEXT,
     college_year INT,
     college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
@@ -174,7 +174,7 @@ CREATE TABLE sessions (
 CREATE TABLE store_items (
     id UUID PRIMARY KEY,
     store_id UUID REFERENCES stores(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     description TEXT,
     price DECIMAL(10,2),
     image_url TEXT
@@ -182,8 +182,8 @@ CREATE TABLE store_items (
 
 CREATE TABLE stores (
     id UUID PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    location VARCHAR(255),
+    name VARCHAR(100) NOT NULL,
+    location VARCHAR(100),
     description TEXT,
     image_url TEXT
 );
