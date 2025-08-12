@@ -2,6 +2,7 @@ from .book_exception import (
     BookInvalidTitleException,
     BookInvalidSummaryException,
     BookInvalidSectionException,
+    BookInvalidIsHiddenException,
     BookInvalidImageUrlException,
     BookNotFoundException,
     BooksNotFoundException
