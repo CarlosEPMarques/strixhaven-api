@@ -1,7 +1,3 @@
-Sure! Here's the `data-model.md` documentation in English based on your SQL script:
-
----
-
 # Data Model
 
 ## Extensions
