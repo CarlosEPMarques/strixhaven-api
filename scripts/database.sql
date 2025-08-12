@@ -5,8 +5,8 @@ CREATE TYPE user_role AS ENUM ('DM', 'PLAYER');
 
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role user_role NOT NULL,
     avatar_url TEXT
@@ -41,7 +41,7 @@ CREATE TABLE player_characters (
 CREATE TABLE inventory_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
-    item_id UUID,
+    item_id UUID DEFAULT gen_random_uuid(),
     amount INT,
     metadata JSONB
 );
@@ -88,7 +88,8 @@ CREATE TABLE npcs (
     name VARCHAR(255) NOT NULL,
     image_url TEXT,
     bio TEXT,
-    is_visible BOOLEAN DEFAULT TRUE
+    is_visible BOOLEAN DEFAULT TRUE,
+    visible_to TEXT
 );
 
 CREATE TABLE npcs_reputation (
@@ -136,7 +137,7 @@ CREATE TABLE event_notes (
     PRIMARY KEY (note_id, event_id)
 );
 
-CREATE TABLE store (
+CREATE TABLE stores (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
     location VARCHAR(255),
@@ -146,7 +147,7 @@ CREATE TABLE store (
 
 CREATE TABLE store_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    store_id UUID REFERENCES store(id) ON DELETE CASCADE,
+    store_id UUID REFERENCES stores(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     price DECIMAL(10,2),
@@ -190,4 +191,11 @@ CREATE TABLE monsters (
     armor_class INT,
     description TEXT,
     image_url TEXT
+);
+
+CREATE TABLE sessions (
+    session_id TEXT PRIMARY KEY,
+    user_id UUID NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    expires_at TIMESTAMP NOT NULL
 );
