@@ -1,320 +1,301 @@
-# Data Models
-
-## Prerequisites
-
-* PostgreSQL 12+ (recommended).
-* `pgcrypto` extension for `gen_random_uuid()`:
-
-```sql
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-```
-
-* `user_role` enum:
-
-```sql
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
-    CREATE TYPE user_role AS ENUM ('DM','PLAYER');
-  END IF;
-END$$;
-```
+Sure! Here's the `data-model.md` documentation in English based on your SQL script:
 
 ---
 
-## Table Reference
+# Data Model
 
-Each table section includes column name, type, nullability, default and a short description.
+## Extensions
+
+* `pgcrypto` extension for UUID generation (`gen_random_uuid()` function).
+
+## Enumerations
+
+### `user_role`
+
+* Possible values: `'DM'`, `'PLAYER'`
+
+---
+
+## Tables
 
 ### `users`
 
-| Column       |               Type |   Null?  | Default             | Description                       |
-| ------------ | -----------------: | :------: | ------------------- | --------------------------------- |
-| `id`         |             `UUID` | NOT NULL | `gen_random_uuid()` | Primary key                       |
-| `name`       |     `varchar(255)` | NOT NULL | —                   | Full name                         |
-| `email`      |     `varchar(255)` | NOT NULL | —                   | Unique user email                 |
-| `password`   |     `varchar(255)` | NOT NULL | —                   | Password hash (store salted hash) |
-| `role`       | `user_role` (enum) | NOT NULL | —                   | `DM` or `PLAYER`                  |
-| `avatar_url` |             `text` |   NULL   | —                   | Avatar image URL                  |
-
-**Notes:** `UNIQUE(email)` recommended.
+| Column      | Type         | Constraints                     | Description                |
+| ----------- | ------------ | ------------------------------- | -------------------------- |
+| id          | UUID         | PK, default `gen_random_uuid()` | Unique user identifier     |
+| name        | VARCHAR(100) | NOT NULL                        | User's name                |
+| email       | VARCHAR(100) | UNIQUE, NOT NULL                | User's email               |
+| password    | VARCHAR(255) | NOT NULL                        | User's password            |
+| role        | `user_role`  | NOT NULL                        | User's role (DM or PLAYER) |
+| avatar\_url | TEXT         |                                 | URL to user's avatar image |
 
 ---
 
 ### `colleges`
 
-| Column        |           Type |   Null?  | Default             | Description     |
-| ------------- | -------------: | :------: | ------------------- | --------------- |
-| `id`          |         `UUID` | NOT NULL | `gen_random_uuid()` | PK              |
-| `name`        | `varchar(255)` | NOT NULL | —                   | College name    |
-| `description` |         `text` |   NULL   | —                   | Description     |
-| `image_url`   |         `text` |   NULL   | —                   | Image/crest URL |
+| Column      | Type         | Constraints                     | Description          |
+| ----------- | ------------ | ------------------------------- | -------------------- |
+| id          | UUID         | PK, default `gen_random_uuid()` | College identifier   |
+| name        | VARCHAR(255) | NOT NULL                        | College name         |
+| description | TEXT         |                                 | College description  |
+| image\_url  | TEXT         |                                 | URL to college image |
 
 ---
 
 ### `classes`
 
-| Column        |           Type |   Null?  | Default             | FK                                   | Description       |
-| ------------- | -------------: | :------: | ------------------- | ------------------------------------ | ----------------- |
-| `id`          |         `UUID` | NOT NULL | `gen_random_uuid()` | —                                    | PK                |
-| `name`        | `varchar(255)` | NOT NULL | —                   | —                                    | Class/course name |
-| `description` |         `text` |   NULL   | —                   | —                                    | Class description |
-| `college_id`  |         `UUID` |   NULL   | —                   | → `colleges.id` (ON DELETE SET NULL) | Parent college    |
-| `image_url`   |         `text` |   NULL   | —                   | —                                    | Class icon        |
+| Column      | Type         | Constraints                              | Description        |
+| ----------- | ------------ | ---------------------------------------- | ------------------ |
+| id          | UUID         | PK, default `gen_random_uuid()`          | Class identifier   |
+| name        | VARCHAR(255) | NOT NULL                                 | Class name         |
+| description | TEXT         |                                          | Class description  |
+| college\_id | UUID         | FK to `colleges(id)`, ON DELETE SET NULL | Associated college |
+| image\_url  | TEXT         |                                          | URL to class image |
 
 ---
 
 ### `player_characters`
 
-| Column             |           Type |   Null?  | Default             | FK                                   | Description                             |
-| ------------------ | -------------: | :------: | ------------------- | ------------------------------------ | --------------------------------------- |
-| `id`               |         `UUID` | NOT NULL | `gen_random_uuid()` | —                                    | PK                                      |
-| `user_id`          |         `UUID` | NOT NULL | —                   | → `users.id` (ON DELETE CASCADE)     | Owner                                   |
-| `name`             | `varchar(255)` | NOT NULL | —                   | —                                    | Character name                          |
-| `image_url`        |         `text` |   NULL   | —                   | —                                    | Portrait URL                            |
-| `college_year`     |          `int` |   NULL   | —                   | —                                    | In-world college year                   |
-| `college_id`       |         `UUID` |   NULL   | —                   | → `colleges.id` (ON DELETE SET NULL) | Linked college                          |
-| `enrolled_classes` |         `text` |   NULL   | —                   | —                                    | Free-text list (consider normalization) |
-| `level`            |          `int` |   NULL   | —                   | —                                    | Character level                         |
-
-**Suggestion:** normalize `enrolled_classes` into `character_classes(character_id, class_id)`.
-
----
-
-### `character_sheet`
-
-| Column               |                Type |   Null?  | Default             | FK                                           | Description                          |
-| -------------------- | ------------------: | :------: | ------------------- | -------------------------------------------- | ------------------------------------ |
-| `id`                 |              `UUID` | NOT NULL | `gen_random_uuid()` | —                                            | PK                                   |
-| `character_id`       |              `UUID` | NOT NULL | —                   | → `player_characters.id` (ON DELETE CASCADE) | 1:1 reference (add UNIQUE if needed) |
-| `strength`           |               `INT` |   NULL   | —                   | —                                            | Ability score                        |
-| `dexterity`          |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `constitution`       |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `intelligence`       |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `wisdom`             |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `charisma`           |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `proficiency_bonus`  |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `armor_class`        |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `initiative`         |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `speed`              | `NUMERIC` / `FLOAT` |   NULL   | —                   | —                                            | Movement speed                       |
-| `max_hit_points`     |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `current_hit_points` |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `temp_hit_points`    |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `hit_dice_total`     |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `hit_dice_current`   |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `save_str`           |               `INT` |   NULL   | —                   | —                                            | Saves                                |
-| `save_dex`           |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `save_con`           |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `save_int`           |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `save_wis`           |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `save_cha`           |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `skills`             |              `text` |   NULL   | —                   | —                                            | Serialized structure                 |
-| `background`         |              `text` |   NULL   | —                   | —                                            |                                      |
-| `race`               |              `text` |   NULL   | —                   | —                                            |                                      |
-| `alignment`          |              `text` |   NULL   | —                   | —                                            |                                      |
-| `experience_points`  |               `INT` |   NULL   | —                   | —                                            |                                      |
-| `languages`          |              `text` |   NULL   | —                   | —                                            |                                      |
-| `features_traits`    |              `text` |   NULL   | —                   | —                                            |                                      |
-| `proficiencies`      |              `text` |   NULL   | —                   | —                                            |                                      |
-| `description`        |              `text` |   NULL   | —                   | —                                            | Free text                            |
-| `created_at`         |         `timestamp` | NOT NULL | `now()`             | —                                            | Creation time                        |
-| `updated_at`         |         `timestamp` | NOT NULL | `now()`             | —                                            | Last update                          |
-
-**Note:** enforce `UNIQUE(character_id)` to guarantee true 1:1.
+| Column            | Type         | Constraints                              | Description            |
+| ----------------- | ------------ | ---------------------------------------- | ---------------------- |
+| id                | UUID         | PK, default `gen_random_uuid()`          | Character identifier   |
+| user\_id          | UUID         | FK to `users(id)`, ON DELETE CASCADE     | Owning user            |
+| name              | VARCHAR(255) | NOT NULL                                 | Character name         |
+| image\_url        | TEXT         |                                          | URL to character image |
+| college\_year     | INT          |                                          | College year           |
+| college\_id       | UUID         | FK to `colleges(id)`, ON DELETE SET NULL | Character's college    |
+| enrolled\_classes | TEXT         |                                          | Enrolled classes       |
+| level             | INT          |                                          | Character level        |
 
 ---
 
 ### `inventory_items`
 
-| Column         |    Type |   Null?  | Default             | FK                                           | Description                               |
-| -------------- | ------: | :------: | ------------------- | -------------------------------------------- | ----------------------------------------- |
-| `id`           |  `UUID` | NOT NULL | `gen_random_uuid()` | —                                            | PK                                        |
-| `character_id` |  `UUID` | NOT NULL | —                   | → `player_characters.id` (ON DELETE CASCADE) | Owner                                     |
-| `item_id`      |  `UUID` |   NULL   | —                   | (optional → `items.id`)                      | Reference to global item catalog          |
-| `amount`       |   `INT` |   NULL   | —                   | —                                            | Quantity                                  |
-| `metadata`     | `JSONB` |   NULL   | —                   | —                                            | Flexible attributes (enchantments, notes) |
+| Column        | Type  | Constraints                                      | Description               |
+| ------------- | ----- | ------------------------------------------------ | ------------------------- |
+| id            | UUID  | PK, default `gen_random_uuid()`                  | Inventory item identifier |
+| character\_id | UUID  | FK to `player_characters(id)`, ON DELETE CASCADE | Owner character           |
+| item\_id      | UUID  | Default `gen_random_uuid()`                      | Item identifier           |
+| amount        | INT   |                                                  | Quantity                  |
+| metadata      | JSONB |                                                  | Additional metadata       |
+
+---
+
+### `character_sheet`
+
+| Column               | Type      | Constraints                                      | Description                |
+| -------------------- | --------- | ------------------------------------------------ | -------------------------- |
+| id                   | UUID      | PK, default `gen_random_uuid()`                  | Character sheet identifier |
+| character\_id        | UUID      | FK to `player_characters(id)`, ON DELETE CASCADE | Associated character       |
+| strength             | INTEGER   |                                                  | Strength                   |
+| dexterity            | INTEGER   |                                                  | Dexterity                  |
+| constitution         | INTEGER   |                                                  | Constitution               |
+| intelligence         | INTEGER   |                                                  | Intelligence               |
+| wisdom               | INTEGER   |                                                  | Wisdom                     |
+| charisma             | INTEGER   |                                                  | Charisma                   |
+| proficiency\_bonus   | INTEGER   |                                                  | Proficiency bonus          |
+| armor\_class         | INTEGER   |                                                  | Armor class                |
+| initiative           | INTEGER   |                                                  | Initiative                 |
+| speed                | FLOAT     |                                                  | Movement speed             |
+| max\_hit\_points     | INTEGER   |                                                  | Maximum hit points         |
+| current\_hit\_points | INTEGER   |                                                  | Current hit points         |
+| temp\_hit\_points    | INTEGER   |                                                  | Temporary hit points       |
+| hit\_dice\_total     | INTEGER   |                                                  | Total hit dice             |
+| hit\_dice\_current   | INTEGER   |                                                  | Current hit dice           |
+| save\_str            | INTEGER   |                                                  | Strength saving throw      |
+| save\_dex            | INTEGER   |                                                  | Dexterity saving throw     |
+| save\_con            | INTEGER   |                                                  | Constitution saving throw  |
+| save\_int            | INTEGER   |                                                  | Intelligence saving throw  |
+| save\_wis            | INTEGER   |                                                  | Wisdom saving throw        |
+| save\_cha            | INTEGER   |                                                  | Charisma saving throw      |
+| skills               | TEXT      |                                                  | Skills                     |
+| background           | TEXT      |                                                  | Background                 |
+| race                 | TEXT      |                                                  | Race                       |
+| alignment            | TEXT      |                                                  | Alignment                  |
+| experience\_points   | INTEGER   |                                                  | Experience points          |
+| languages            | TEXT      |                                                  | Languages                  |
+| features\_traits     | TEXT      |                                                  | Features and traits        |
+| proficiencies        | TEXT      |                                                  | Proficiencies              |
+| description          | TEXT      |                                                  | Description                |
+| created\_at          | TIMESTAMP | Default NOW()                                    | Creation timestamp         |
+| updated\_at          | TIMESTAMP | Default NOW()                                    | Update timestamp           |
 
 ---
 
 ### `npcs`
 
-| Column       |           Type |   Null?  | Default             | Description           |
-| ------------ | -------------: | :------: | ------------------- | --------------------- |
-| `id`         |         `UUID` | NOT NULL | `gen_random_uuid()` | PK                    |
-| `name`       | `varchar(255)` | NOT NULL | —                   | NPC name              |
-| `image_url`  |         `text` |   NULL   | —                   | Portrait URL          |
-| `bio`        |         `text` |   NULL   | —                   | NPC biography         |
-| `is_visible` |      `boolean` | NOT NULL | `true`              | Visibility to players |
+| Column      | Type         | Constraints                     | Description         |
+| ----------- | ------------ | ------------------------------- | ------------------- |
+| id          | UUID         | PK, default `gen_random_uuid()` | NPC identifier      |
+| name        | VARCHAR(255) | NOT NULL                        | NPC name            |
+| image\_url  | TEXT         |                                 | NPC image URL       |
+| bio         | TEXT         |                                 | NPC biography       |
+| is\_visible | BOOLEAN      | Default TRUE                    | Visibility flag     |
+| visible\_to | TEXT         |                                 | Specific visibility |
 
 ---
 
 ### `npcs_reputation`
 
-| Column         |   Type |   Null?  | Default             | FK                                           | Description      |
-| -------------- | -----: | :------: | ------------------- | -------------------------------------------- | ---------------- |
-| `id`           | `UUID` | NOT NULL | `gen_random_uuid()` | —                                            | PK               |
-| `character_id` | `UUID` | NOT NULL | —                   | → `player_characters.id` (ON DELETE CASCADE) |                  |
-| `npc_id`       | `UUID` | NOT NULL | —                   | → `npcs.id` (ON DELETE CASCADE)              |                  |
-| `score`        |  `INT` |   NULL   | —                   | —                                            | Reputation value |
+| Column        | Type | Constraints                                      | Description                  |
+| ------------- | ---- | ------------------------------------------------ | ---------------------------- |
+| id            | UUID | PK, default `gen_random_uuid()`                  | Reputation record identifier |
+| character\_id | UUID | FK to `player_characters(id)`, ON DELETE CASCADE | Character                    |
+| npc\_id       | UUID | FK to `npcs(id)`, ON DELETE CASCADE              | NPC                          |
+| score         | INT  |                                                  | Reputation score             |
 
 ---
 
 ### `notes`
 
-| Column           |        Type |   Null?  | Default             | Description       |
-| ---------------- | ----------: | :------: | ------------------- | ----------------- |
-| `id`             |      `UUID` | NOT NULL | `gen_random_uuid()` | PK                |
-| `author_id`      |      `UUID` | NOT NULL | —                   | → `users.id`      |
-| `content`        |      `text` | NOT NULL | —                   | Note body         |
-| `is_master_only` |   `boolean` | NOT NULL | `false`             | DM-only flag      |
-| `is_privative`   |   `boolean` | NOT NULL | `false`             | Private note flag |
-| `created_at`     | `timestamp` | NOT NULL | `now()`             | Creation time     |
-| `updated_at`     | `timestamp` | NOT NULL | `now()`             | Last update       |
+| Column           | Type      | Constraints                          | Description        |
+| ---------------- | --------- | ------------------------------------ | ------------------ |
+| id               | UUID      | PK, default `gen_random_uuid()`      | Note identifier    |
+| author\_id       | UUID      | FK to `users(id)`, ON DELETE CASCADE | Note author        |
+| content          | TEXT      | NOT NULL                             | Note content       |
+| is\_master\_only | BOOLEAN   | Default FALSE                        | Master-only flag   |
+| is\_privative    | BOOLEAN   | Default FALSE                        | Private note flag  |
+| created\_at      | TIMESTAMP | Default NOW()                        | Creation timestamp |
+| updated\_at      | TIMESTAMP | Default NOW()                        | Update timestamp   |
 
 ---
 
-### `character_notes` (junction)
+### `character_notes`
 
-| Column                                     |   Type |   Null?  | Default | FK                                           |
-| ------------------------------------------ | -----: | :------: | ------- | -------------------------------------------- |
-| `note_id`                                  | `UUID` | NOT NULL | —       | → `notes.id` (ON DELETE CASCADE)             |
-| `character_id`                             | `UUID` | NOT NULL | —       | → `player_characters.id` (ON DELETE CASCADE) |
-| **Primary Key:** `(note_id, character_id)` |        |          |         |                                              |
+| Column        | Type | Constraints                                      | Description |
+| ------------- | ---- | ------------------------------------------------ | ----------- |
+| note\_id      | UUID | FK to `notes(id)`, ON DELETE CASCADE             | Note        |
+| character\_id | UUID | FK to `player_characters(id)`, ON DELETE CASCADE | Character   |
 
----
-
-### `npc_notes` (junction)
-
-| Column                               |   Type |   Null?  | Default | FK                               |
-| ------------------------------------ | -----: | :------: | ------- | -------------------------------- |
-| `note_id`                            | `UUID` | NOT NULL | —       | → `notes.id` (ON DELETE CASCADE) |
-| `npc_id`                             | `UUID` | NOT NULL | —       | → `npcs.id` (ON DELETE CASCADE)  |
-| `author_id`                          | `UUID` | NOT NULL | —       | → `users.id` (denormalized)      |
-| **Primary Key:** `(note_id, npc_id)` |        |          |         |                                  |
+**Primary Key:** (note\_id, character\_id)
 
 ---
 
-### `event_notes` (junction)
+### `npc_notes`
 
-| Column                                 |   Type |   Null?  | Default | FK                                 |
-| -------------------------------------- | -----: | :------: | ------- | ---------------------------------- |
-| `note_id`                              | `UUID` | NOT NULL | —       | → `notes.id` (ON DELETE CASCADE)   |
-| `event_id`                             | `UUID` | NOT NULL | —       | → `calendar_notes.id`              |
-| `author_id`                            | `UUID` | NOT NULL | —       | → `users.id`                       |
-| **Primary Key:** `(note_id, event_id)` |        |          |         |                                    |
+| Column     | Type | Constraints                          | Description |
+| ---------- | ---- | ------------------------------------ | ----------- |
+| note\_id   | UUID | FK to `notes(id)`, ON DELETE CASCADE | Note        |
+| npc\_id    | UUID | FK to `npcs(id)`, ON DELETE CASCADE  | NPC         |
+| author\_id | UUID | FK to `users(id)`, ON DELETE CASCADE | Author      |
 
-> Consider adding a FK to `calendar_notes.id` if `event_id` maps to that resource.
+**Primary Key:** (note\_id, npc\_id)
 
 ---
 
 ### `calendar_notes`
 
-| Column          |           Type |   Null?  | Default             | Description        |
-| --------------- | -------------: | :------: | ------------------- | ------------------ |
-| `id`            |         `UUID` | NOT NULL | `gen_random_uuid()` | PK                 |
-| `title`         | `varchar(255)` | NOT NULL | —                   | Event title        |
-| `description`   |         `text` |   NULL   | —                   |                    |
-| `game_datetime` |    `timestamp` |   NULL   | —                   | In-world date/time |
-| `is_exam`       |      `boolean` | NOT NULL | `false`             | Domain flag        |
+| Column         | Type         | Constraints                     | Description           |
+| -------------- | ------------ | ------------------------------- | --------------------- |
+| id             | UUID         | PK, default `gen_random_uuid()` | Event identifier      |
+| title          | VARCHAR(255) | NOT NULL                        | Event title           |
+| description    | TEXT         |                                 | Event description     |
+| game\_datetime | TIMESTAMP    |                                 | In-game date and time |
+| is\_exam       | BOOLEAN      | Default FALSE                   | Exam flag             |
 
 ---
 
-### `store`
+### `event_notes`
 
-| Column        |           Type |   Null?  | Default             | Description   |
-| ------------- | -------------: | :------: | ------------------- | ------------- |
-| `id`          |         `UUID` | NOT NULL | `gen_random_uuid()` | PK            |
-| `name`        | `varchar(255)` | NOT NULL | —                   | Store name    |
-| `location`    | `varchar(255)` |   NULL   | —                   | Location text |
-| `description` |         `text` |   NULL   | —                   |               |
-| `image_url`   |         `text` |   NULL   | —                   | Store image   |
+| Column     | Type | Constraints                                   | Description |
+| ---------- | ---- | --------------------------------------------- | ----------- |
+| note\_id   | UUID | FK to `notes(id)`, ON DELETE CASCADE          | Note        |
+| event\_id  | UUID | FK to `calendar_notes(id)`, ON DELETE CASCADE | Event       |
+| author\_id | UUID | FK to `users(id)`, ON DELETE CASCADE          | Author      |
+
+**Primary Key:** (note\_id, event\_id)
+
+---
+
+### `stores`
+
+| Column      | Type         | Constraints                     | Description       |
+| ----------- | ------------ | ------------------------------- | ----------------- |
+| id          | UUID         | PK, default `gen_random_uuid()` | Store identifier  |
+| name        | VARCHAR(255) | NOT NULL                        | Store name        |
+| location    | VARCHAR(255) |                                 | Store location    |
+| description | TEXT         |                                 | Store description |
+| image\_url  | TEXT         |                                 | Store image URL   |
 
 ---
 
 ### `store_items`
 
-| Column        |            Type |   Null?  | Default             | FK                               | Description |
-| ------------- | --------------: | :------: | ------------------- | -------------------------------- | ----------- |
-| `id`          |          `UUID` | NOT NULL | `gen_random_uuid()` | —                                | PK          |
-| `store_id`    |          `UUID` | NOT NULL | —                   | → `store.id` (ON DELETE CASCADE) |             |
-| `name`        |  `varchar(255)` | NOT NULL | —                   | —                                |             |
-| `description` |          `text` |   NULL   | —                   | —                                |             |
-| `price`       | `decimal(10,2)` |   NULL   | —                   | —                                |             |
-| `image_url`   |          `text` |   NULL   | —                   | —                                | Item image  |
+| Column      | Type          | Constraints                           | Description           |
+| ----------- | ------------- | ------------------------------------- | --------------------- |
+| id          | UUID          | PK, default `gen_random_uuid()`       | Store item identifier |
+| store\_id   | UUID          | FK to `stores(id)`, ON DELETE CASCADE | Associated store      |
+| name        | VARCHAR(255)  | NOT NULL                              | Item name             |
+| description | TEXT          |                                       | Item description      |
+| price       | DECIMAL(10,2) |                                       | Item price            |
+| image\_url  | TEXT          |                                       | Item image URL        |
 
 ---
 
 ### `books`
 
-| Column      |           Type |   Null?  | Default             | Description     |
-| ----------- | -------------: | :------: | ------------------- | --------------- |
-| `id`        |         `UUID` | NOT NULL | `gen_random_uuid()` | PK              |
-| `title`     | `varchar(255)` | NOT NULL | —                   | Book title      |
-| `summary`   |         `text` |   NULL   | —                   |                 |
-| `section`   | `varchar(255)` |   NULL   | —                   | Library section |
-| `is_hidden` |      `boolean` | NOT NULL | `false`             | Visibility      |
-| `image_url` |         `text` |   NULL   | —                   | Cover image     |
+| Column     | Type         | Constraints                     | Description     |
+| ---------- | ------------ | ------------------------------- | --------------- |
+| id         | UUID         | PK, default `gen_random_uuid()` | Book identifier |
+| title      | VARCHAR(255) | NOT NULL                        | Book title      |
+| summary    | TEXT         |                                 | Book summary    |
+| section    | VARCHAR(255) |                                 | Book section    |
+| is\_hidden | BOOLEAN      | Default FALSE                   | Hidden flag     |
+| image\_url | TEXT         |                                 | Book image URL  |
 
 ---
 
 ### `news`
 
-| Column          |           Type |   Null?  | Default             | Description   |
-| --------------- | -------------: | :------: | ------------------- | ------------- |
-| `id`            |         `UUID` | NOT NULL | `gen_random_uuid()` | PK            |
-| `headline`      | `varchar(255)` | NOT NULL | —                   | Headline      |
-| `body`          |         `text` |   NULL   | —                   | Content       |
-| `game_datetime` |    `timestamp` |   NULL   | —                   | In-world time |
-| `image_url`     |         `text` |   NULL   | —                   | News image    |
+| Column         | Type         | Constraints                     | Description           |
+| -------------- | ------------ | ------------------------------- | --------------------- |
+| id             | UUID         | PK, default `gen_random_uuid()` | News identifier       |
+| headline       | VARCHAR(255) | NOT NULL                        | News headline         |
+| body           | TEXT         |                                 | News body             |
+| game\_datetime | TIMESTAMP    |                                 | In-game date and time |
+| image\_url     | TEXT         |                                 | News image URL        |
 
 ---
 
 ### `maps`
 
-| Column      |           Type |   Null?  | Default             | Description   |
-| ----------- | -------------: | :------: | ------------------- | ------------- |
-| `id`        |         `UUID` | NOT NULL | `gen_random_uuid()` | PK            |
-| `title`     | `varchar(255)` | NOT NULL | —                   | Map title     |
-| `image_url` |         `text` |   NULL   | —                   | Map image URL |
+| Column     | Type         | Constraints                     | Description    |
+| ---------- | ------------ | ------------------------------- | -------------- |
+| id         | UUID         | PK, default `gen_random_uuid()` | Map identifier |
+| title      | VARCHAR(255) | NOT NULL                        | Map title      |
+| image\_url | TEXT         |                                 | Map image URL  |
 
 ---
 
 ### `monsters`
 
-| Column              |           Type |   Null?  | Default             | Description  |
-| ------------------- | -------------: | :------: | ------------------- | ------------ |
-| `id`                |         `UUID` | NOT NULL | `gen_random_uuid()` | PK           |
-| `name`              | `varchar(255)` | NOT NULL | —                   | Monster name |
-| `hit_points`        |          `INT` |   NULL   | —                   | HP           |
-| `experience_points` |          `INT` |   NULL   | —                   | XP reward    |
-| `strength`          |          `INT` |   NULL   | —                   | Stats        |
-| `dexterity`         |          `INT` |   NULL   | —                   |              |
-| `constitution`      |          `INT` |   NULL   | —                   |              |
-| `intelligence`      |          `INT` |   NULL   | —                   |              |
-| `wisdom`            |          `INT` |   NULL   | —                   |              |
-| `charisma`          |          `INT` |   NULL   | —                   |              |
-| `armor_class`       |          `INT` |   NULL   | —                   |              |
-| `description`       |         `text` |   NULL   | —                   |              |
-| `image_url`         |         `text` |   NULL   | —                   | Monster art  |
+| Column             | Type         | Constraints                     | Description        |
+| ------------------ | ------------ | ------------------------------- | ------------------ |
+| id                 | UUID         | PK, default `gen_random_uuid()` | Monster identifier |
+| name               | VARCHAR(255) | NOT NULL                        | Monster name       |
+| hit\_points        | INT          |                                 | Hit points         |
+| experience\_points | INT          |                                 | Experience points  |
+| strength           | INT          |                                 | Strength           |
+| dexterity          | INT          |                                 | Dexterity          |
+| constitution       | INT          |                                 | Constitution       |
+| intelligence       | INT          |                                 | Intelligence       |
 
 ---
 
-## Relationships (summary)
+### `sessions`
 
-* `users (1) -> (M) player_characters` (`player_characters.user_id`), `ON DELETE CASCADE`.
-* `player_characters (1) -> (1) character_sheet` (`character_sheet.character_id`) — consider `UNIQUE`.
-* `player_characters (1) -> (M) inventory_items` (`inventory_items.character_id`), `ON DELETE CASCADE`.
-* `player_characters (M) <-> (M) npcs` via `npcs_reputation` (with `score` attribute).
-* `notes` attach to domain objects via junctions: `character_notes`, `npc_notes`, `event_notes`.
-* `colleges (1) -> (M) classes` (`classes.college_id`) and `colleges (1) -> (M) player_characters` (`player_characters.college_id`), both `ON DELETE SET NULL`.
-* `store (1) -> (M) store_items` (`ON DELETE CASCADE`).
+| Column      | Type      | Constraints   | Description                  |
+| ----------- | --------- | ------------- | ---------------------------- |
+| session\_id | TEXT      | PRIMARY KEY   | Unique session identifier    |
+| user\_id    | UUID      | NOT NULL      | Reference to the user        |
+| created\_at | TIMESTAMP | DEFAULT NOW() | Session creation timestamp   |
+| expires\_at | TIMESTAMP | NOT NULL      | Session expiration timestamp |
 
-## Mermaid
+## Mermaid Diagram
 
-```mermaid
 erDiagram
     %% =========================
-    %% USERS & ROLES
+    %% USERS & AUTHENTICATION
     %% =========================
     USERS {
         uuid id PK
@@ -323,6 +304,13 @@ erDiagram
         string password
         enum role
         text avatar_url
+    }
+
+    SESSIONS {
+        string session_id PK
+        uuid user_id FK
+        timestamp created_at
+        timestamp expires_at
     }
 
     %% =========================
@@ -354,20 +342,6 @@ erDiagram
         int level
     }
 
-    %% =========================
-    %% INVENTORY & ITEMS
-    %% =========================
-    INVENTORY_ITEMS {
-        uuid id PK
-        uuid character_id FK
-        uuid item_id
-        int amount
-        jsonb metadata
-    }
-
-    %% =========================
-    %% CHARACTER SHEET
-    %% =========================
     CHARACTER_SHEET {
         uuid id PK
         uuid character_id FK
@@ -406,6 +380,17 @@ erDiagram
     }
 
     %% =========================
+    %% INVENTORY & ITEMS
+    %% =========================
+    INVENTORY_ITEMS {
+        uuid id PK
+        uuid character_id FK
+        uuid item_id
+        int amount
+        jsonb metadata
+    }
+
+    %% =========================
     %% NPCs & REPUTATION
     %% =========================
     NPCS {
@@ -414,6 +399,7 @@ erDiagram
         text image_url
         text bio
         boolean is_visible
+        text visible_to
     }
 
     NPCS_REPUTATION {
@@ -447,12 +433,6 @@ erDiagram
         uuid author_id FK
     }
 
-    EVENT_NOTES {
-        uuid note_id FK
-        uuid event_id FK
-        uuid author_id FK
-    }
-
     CALENDAR_NOTES {
         uuid id PK
         string title
@@ -461,10 +441,16 @@ erDiagram
         boolean is_exam
     }
 
+    EVENT_NOTES {
+        uuid note_id FK
+        uuid event_id FK
+        uuid author_id FK
+    }
+
     %% =========================
-    %% STORES & ITEMS
+    %% STORES & STORE ITEMS
     %% =========================
-    STORE {
+    STORES {
         uuid id PK
         string name
         string location
@@ -482,7 +468,7 @@ erDiagram
     }
 
     %% =========================
-    %% BOOKS
+    %% BOOKS & NEWS
     %% =========================
     BOOKS {
         uuid id PK
@@ -493,9 +479,6 @@ erDiagram
         text image_url
     }
 
-    %% =========================
-    %% NEWS
-    %% =========================
     NEWS {
         uuid id PK
         string headline
@@ -505,7 +488,7 @@ erDiagram
     }
 
     %% =========================
-    %% MAPS
+    %% MAPS & MONSTERS
     %% =========================
     MAPS {
         uuid id PK
@@ -513,9 +496,6 @@ erDiagram
         text image_url
     }
 
-    %% =========================
-    %% MONSTERS
-    %% =========================
     MONSTERS {
         uuid id PK
         string name
@@ -537,17 +517,27 @@ erDiagram
     %% =========================
     USERS ||--o{ PLAYER_CHARACTERS : "has"
     USERS ||--o{ NOTES : "writes"
+    USERS ||--o{ NPC_NOTES : "writes"
+    USERS ||--o{ EVENT_NOTES : "writes"
+    USERS ||--o{ SESSIONS : "owns"
+
     COLLEGES ||--o{ CLASSES : "offers"
     COLLEGES ||--o{ PLAYER_CHARACTERS : "attended by"
+
     CLASSES ||--o{ PLAYER_CHARACTERS : "enrolled in"
+
     PLAYER_CHARACTERS ||--o{ INVENTORY_ITEMS : "owns"
     PLAYER_CHARACTERS ||--o{ CHARACTER_SHEET : "has"
     PLAYER_CHARACTERS ||--o{ NPCS_REPUTATION : "interacts with"
     PLAYER_CHARACTERS ||--o{ CHARACTER_NOTES : "has"
+
     NPCS ||--o{ NPCS_REPUTATION : "linked to"
     NPCS ||--o{ NPC_NOTES : "has notes"
+
     CALENDAR_NOTES ||--o{ EVENT_NOTES : "linked to"
+
     NOTES ||--o{ CHARACTER_NOTES : "relates to"
     NOTES ||--o{ NPC_NOTES : "relates to"
     NOTES ||--o{ EVENT_NOTES : "relates to"
-    STORE ||--o{ STORE_ITEMS : "sells"
+
+    STORES ||--o{ STORE_ITEMS : "sells"
