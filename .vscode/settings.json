@@ -2,6 +2,10 @@
     "cSpell.words": [
         "drivername",
         "DRIVERNAME",
+        "npcs",
+        "nullable",
+        "ondelete",
+        "onupdate",
         "postgresql",
         "POSTGRESQL",
         "strixhaven",
