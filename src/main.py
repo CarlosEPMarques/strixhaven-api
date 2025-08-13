@@ -21,6 +21,9 @@ from src.modules.store import store_router
 from src.modules.user import user_router
 
 from src.settings.server.fastapi import app
+from src.settings.jwt import jwt_middleware
+
+app.middleware("http")(jwt_middleware)
 
 routers: list[APIRouter] = [
     book_router,
