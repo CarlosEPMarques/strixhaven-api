@@ -4,7 +4,7 @@ from re import match
 from urllib.parse import urlparse
 from uuid import uuid4
 
-from src.exceptions import (
+from .book_exception import (
     BookInvalidIsHiddenException,
     BookInvalidImageUrlException,
     BookInvalidSectionException,

@@ -1,0 +1,1 @@
+from .map_router import router as map_router

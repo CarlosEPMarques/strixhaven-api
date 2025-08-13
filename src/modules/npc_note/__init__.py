@@ -1,0 +1,1 @@
+from .npc_note_router import router as npc_note_router

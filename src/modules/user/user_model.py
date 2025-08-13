@@ -1,5 +1,5 @@
 from uuid import UUID
-from src.models.user_role_enum import UserRole
+from src.modules.user.user_role_enum import UserRole
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import String, Text
 from sqlalchemy.dialects.postgresql import ENUM, UUID as PG_UUID

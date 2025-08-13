@@ -1,0 +1,1 @@
+from .player_character_router import router as player_character_router

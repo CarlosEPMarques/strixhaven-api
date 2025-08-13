@@ -1,0 +1,1 @@
+from .character_note_router import router as character_note_router

@@ -1,0 +1,1 @@
+from .college_router import router as college_router

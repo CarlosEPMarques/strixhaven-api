@@ -1,0 +1,1 @@
+from .monster_router import router as monster_router
