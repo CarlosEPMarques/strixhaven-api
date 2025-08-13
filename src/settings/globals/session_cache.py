@@ -1,5 +1,5 @@
 from cachetools import TTLCache
-from settings.jwt import jwt_settings
+from src.settings.jwt import jwt_settings
 
 session_cache = TTLCache(
     maxsize=jwt_settings.SESSION_MAX,

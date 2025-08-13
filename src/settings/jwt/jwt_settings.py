@@ -1,4 +1,4 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class JWTSettings(BaseSettings):
     SECRET_KEY: str
@@ -6,8 +6,6 @@ class JWTSettings(BaseSettings):
     SESSION_TTL: int = 7200
     SESSION_MAX: int = 1000
     
-    class Config:
-        env_prefix = "JWT_"
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', extra='allow', env_prefix='JWT_')
 
 jwt_settings = JWTSettings()

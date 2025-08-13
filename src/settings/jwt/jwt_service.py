@@ -1,13 +1,13 @@
 import time
 import uuid
 from jose import jwt, JWTError
-from settings.jwt.jwt_exception import (
+from src.settings.jwt.jwt_exception import (
     JWTTokenInvalidException,
     JWTSessionInvalidException,
     JWTTokenCreationException
 )
 
-from globals.session_cache import session_cache
+from src.settings.globals.session_cache import session_cache
 from src.settings.jwt.jwt_settings import jwt_settings
 
 def create_session(user_data: dict) -> str:
