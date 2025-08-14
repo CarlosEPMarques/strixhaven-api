@@ -1,11 +1,65 @@
 CREATE TYPE user_role AS ENUM ('DM', 'PLAYER');
 
+CREATE TABLE users (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role user_role NOT NULL,
+    avatar_url TEXT
+);
+
+CREATE TABLE colleges (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    image_url TEXT
+);
+
 CREATE TABLE books (
     id UUID PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     summary TEXT,
     section VARCHAR(100),
     is_hidden BOOLEAN DEFAULT FALSE,
+    image_url TEXT
+);
+
+CREATE TABLE maps (
+    id UUID PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    image_url TEXT
+);
+
+CREATE TABLE monsters (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    hit_points INT,
+    experience_points INT,
+    strength INT,
+    dexterity INT,
+    constitution INT,
+    intelligence INT,
+    wisdom INT,
+    charisma INT,
+    armor_class INT,
+    description TEXT,
+    image_url TEXT
+);
+
+CREATE TABLE news (
+    id UUID PRIMARY KEY,
+    headline VARCHAR(100) NOT NULL,
+    body TEXT,
+    game_datetime TIMESTAMP,
+    image_url TEXT
+);
+
+CREATE TABLE stores (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    location VARCHAR(100),
+    description TEXT,
     image_url TEXT
 );
 
@@ -17,10 +71,51 @@ CREATE TABLE calendar_notes (
     is_exam BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE character_notes (
-    note_id UUID REFERENCES notes(id) ON DELETE CASCADE,
-    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
-    PRIMARY KEY (note_id, character_id)
+CREATE TABLE npcs (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    image_url TEXT,
+    bio TEXT,
+    is_visible BOOLEAN DEFAULT TRUE,
+    visible_to TEXT
+);
+
+CREATE TABLE player_characters (
+    id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    image_url TEXT,
+    college_year INT,
+    college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
+    enrolled_classes TEXT,
+    level INT
+);
+
+CREATE TABLE classes (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
+    image_url TEXT
+);
+
+CREATE TABLE store_items (
+    id UUID PRIMARY KEY,
+    store_id UUID REFERENCES stores(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2),
+    image_url TEXT
+);
+
+CREATE TABLE notes (
+    id UUID PRIMARY KEY,
+    author_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    is_master_only BOOLEAN DEFAULT FALSE,
+    is_privative BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE character_sheet (
@@ -60,81 +155,12 @@ CREATE TABLE character_sheet (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE classes (
-    id UUID PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
-    image_url TEXT
-);
-
-CREATE TABLE colleges (
-    id UUID PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    image_url TEXT
-);
-
-CREATE TABLE event_notes (
-    note_id UUID REFERENCES notes(id) ON DELETE CASCADE,
-    event_id UUID REFERENCES calendar_notes(id) ON DELETE CASCADE,
-    author_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    PRIMARY KEY (note_id, event_id)
-);
-
 CREATE TABLE inventory_items (
     id UUID PRIMARY KEY,
     character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
     item_id UUID,
     amount INT,
     metadata JSONB
-);
-
-CREATE TABLE maps (
-    id UUID PRIMARY KEY,
-    title VARCHAR(100) NOT NULL,
-    image_url TEXT
-);
-
-CREATE TABLE monsters (
-    id UUID PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    hit_points INT,
-    experience_points INT,
-    strength INT,
-    dexterity INT,
-    constitution INT,
-    intelligence INT,
-    wisdom INT,
-    charisma INT,
-    armor_class INT,
-    description TEXT,
-    image_url TEXT
-);
-
-CREATE TABLE news (
-    id UUID PRIMARY KEY,
-    headline VARCHAR(100) NOT NULL,
-    body TEXT,
-    game_datetime TIMESTAMP,
-    image_url TEXT
-);
-
-CREATE TABLE notes (
-    id UUID PRIMARY KEY,
-    author_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    content TEXT NOT NULL,
-    is_master_only BOOLEAN DEFAULT FALSE,
-    is_privative BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE npc_notes (
-    note_id UUID REFERENCES notes(id) ON DELETE CASCADE,
-    npc_id UUID REFERENCES npcs(id) ON DELETE CASCADE,
-    author_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    PRIMARY KEY (note_id, npc_id)
 );
 
 CREATE TABLE npcs_reputation (
@@ -144,55 +170,22 @@ CREATE TABLE npcs_reputation (
     score INT
 );
 
-CREATE TABLE npcs (
-    id UUID PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    image_url TEXT,
-    bio TEXT,
-    is_visible BOOLEAN DEFAULT TRUE,
-    visible_to TEXT
+CREATE TABLE character_notes (
+    note_id UUID REFERENCES notes(id) ON DELETE CASCADE,
+    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
+    PRIMARY KEY (note_id, character_id)
 );
 
-CREATE TABLE player_characters (
-    id UUID PRIMARY KEY,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    name VARCHAR(100) NOT NULL,
-    image_url TEXT,
-    college_year INT,
-    college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
-    enrolled_classes TEXT,
-    level INT
+CREATE TABLE event_notes (
+    note_id UUID REFERENCES notes(id) ON DELETE CASCADE,
+    event_id UUID REFERENCES calendar_notes(id) ON DELETE CASCADE,
+    author_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (note_id, event_id)
 );
 
-CREATE TABLE sessions (
-    session_id TEXT PRIMARY KEY,
-    user_id UUID NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    expires_at TIMESTAMP NOT NULL
-);
-
-CREATE TABLE store_items (
-    id UUID PRIMARY KEY,
-    store_id UUID REFERENCES stores(id) ON DELETE CASCADE,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    price DECIMAL(10,2),
-    image_url TEXT
-);
-
-CREATE TABLE stores (
-    id UUID PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    location VARCHAR(100),
-    description TEXT,
-    image_url TEXT
-);
-
-CREATE TABLE users (
-    id UUID PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role user_role NOT NULL,
-    avatar_url TEXT
+CREATE TABLE npc_notes (
+    note_id UUID REFERENCES notes(id) ON DELETE CASCADE,
+    npc_id UUID REFERENCES npcs(id) ON DELETE CASCADE,
+    author_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (note_id, npc_id)
 );
