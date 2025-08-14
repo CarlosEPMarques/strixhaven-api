@@ -1,10 +1,9 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from re import match
-from urllib.parse import urlparse
 from uuid import uuid4
+import regex as re
 
-from .book_exception import (
+from src.modules.book.book_exception import (
     BookInvalidIsHiddenException,
     BookInvalidImageUrlException,
     BookInvalidSectionException,
@@ -19,6 +18,10 @@ class BookID:
     @staticmethod
     def generate() -> BookID:
         return BookID(str(uuid4()))
+    
+    @staticmethod
+    def from_uuid(id) -> BookID:
+        return BookID(str(id))
 
     def __str__(self) -> str:
         return self.value
@@ -28,7 +31,7 @@ class BookTitle:
     value: str
     
     def __post_init__(self) -> None:
-        if not isinstance(self.value, str) or not match(r'^[\p{L}\p{N}\s.,!?\'"-]{2,100}$', self.value):
+        if not isinstance(self.value, str) or not re.match(r'^[\p{L}\p{N}\s.,!?\'"-]{2,100}$', self.value):
             raise BookInvalidTitleException
 
 @dataclass(frozen=True)
@@ -44,7 +47,7 @@ class BookSection:
     value: str
     
     def __post_init__(self) -> None:
-        if not isinstance(self.value, str) or not match(r'^[\p{L}\p{N}\s.,!?\'"-]{2,100}$', self.value):
+        if not isinstance(self.value, str) or not re.match(r'^[\p{L}\p{N}\s.,!?\'"-]{2,100}$', self.value):
             raise BookInvalidSectionException
 
 @dataclass(frozen=True)
@@ -63,6 +66,5 @@ class BookImageUrl:
         if not isinstance(self.value, str):
             raise BookInvalidImageUrlException
 
-        parsed = urlparse(self.value)
-        if not all([parsed.scheme in ("http", "https"), parsed.netloc]):
+        if not re.match(r'^https?://[^\s/$.?#].[^\s]*$', self.value):
             raise BookInvalidImageUrlException

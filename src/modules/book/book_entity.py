@@ -1,4 +1,6 @@
 from __future__ import annotations
+import uuid
+from asyncpg.pgproto import pgproto
 
 from .book_value_object import (
     BookID,
@@ -29,6 +31,10 @@ class Book:
 
     @property
     def id(self) -> str:
+        if isinstance(self._id, uuid.UUID):
+            return str(self._id)
+        if isinstance(self._id, pgproto.UUID):
+            return self._id.hex
         return str(self._id)
 
     @property

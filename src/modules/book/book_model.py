@@ -1,7 +1,6 @@
 from __future__ import annotations
 from uuid import UUID
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.types import String, Text, Boolean
 from sqlalchemy import text
 from src.modules.book.book_entity import Book
@@ -19,9 +18,7 @@ class BookModel(Base):
     __tablename__ = "books"
 
     id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True),
-        primary_key=True,
-        server_default=text("gen_random_uuid()")
+        primary_key=True
     )
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     summary: Mapped[str] = mapped_column(Text, nullable=True)
@@ -31,7 +28,7 @@ class BookModel(Base):
 
     def to_entity(self) -> Book:
         return Book(
-            id=BookID(self.id),
+            id=BookID(str(self.id)),
             title=BookTitle(self.title),
             summary=BookSummary(self.summary),
             section=BookSection(self.section),
