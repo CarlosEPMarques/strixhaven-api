@@ -39,23 +39,23 @@ class Book:
 
     @property
     def title(self) -> str:
-        return self._title
+        return self._title.value
 
     @property
     def summary(self) -> str:
-        return self._summary
+        return self._summary.value
 
     @property
     def section(self) -> str:
-        return self._section
+        return self._section.value
 
     @property
     def is_hidden(self) -> str:
-        return self._is_hidden
+        return self._is_hidden.value
 
     @property
     def image_url(self) -> str:
-        return self._image_url
+        return self._image_url.value
 
     def update_title(self, new_title) -> None:
         self._title = new_title
