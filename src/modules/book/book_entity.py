@@ -57,19 +57,19 @@ class Book:
     def image_url(self) -> str:
         return self._image_url.value
 
-    def update_title(self, new_title) -> None:
+    def update_title(self, new_title: BookTitle) -> None:
         self._title = new_title
 
-    def update_summary(self, new_summary) -> None:
+    def update_summary(self, new_summary: BookSummary) -> None:
         self._summary = new_summary
 
-    def update_section(self, new_section) -> None:
+    def update_section(self, new_section: BookSection) -> None:
         self._section = new_section
 
-    def update_is_hidden(self, new_is_hidden) -> None:
+    def update_is_hidden(self, new_is_hidden: BookIsHidden) -> None:
         self._is_hidden = new_is_hidden
 
-    def update_image_url(self, new_image_url) -> None:
+    def update_image_url(self, new_image_url: BookImageUrl) -> None:
         self._image_url = new_image_url
 
     def to_document(self) -> dict:
