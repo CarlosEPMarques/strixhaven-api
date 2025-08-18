@@ -12,11 +12,11 @@ class BookCreateInput(BaseModel):
     
     def to_entity(self) -> Book:
         return Book.create(
-            title=BookTitle(self.title).value,
-            summary=BookSummary(self.summary).value,
-            section=BookSection(self.section).value,
-            is_hidden=BookIsHidden(self.is_hidden).value,
-            image_url=BookImageUrl(self.image_url).value,
+            title=BookTitle(self.title),
+            summary=BookSummary(self.summary),
+            section=BookSection(self.section),
+            is_hidden=BookIsHidden(self.is_hidden),
+            image_url=BookImageUrl(self.image_url),
         )
         
 class BookUpdateInput(BaseModel):
@@ -27,6 +27,7 @@ class BookUpdateInput(BaseModel):
     image_url: str | None = Field(default=None, examples=['https://lordoftherings-image.com'])
     
 class BookOutput(BaseModel):
+    id: str = Field(examples=['casQJWEqkohQE5643HRcmxnRT'])
     title: str = Field(examples=['The Lord of The Rings'])
     summary: str = Field(examples=['In an age long past, in a corner of the world, there lived a quiet people called Hobbits.'])
     section: str = Field(examples=['Fantasy'])
@@ -37,9 +38,9 @@ class BookOutput(BaseModel):
     def from_entity(book: Book) -> BookOutput:
         return BookOutput(
             id=book.id,
-            title=book.title.value,
-            summary=book.summary.value,
-            section=book.section.value,
-            is_hidden=book.is_hidden.value,
-            image_url=book.image_url.value
+            title=book.title,
+            summary=book.summary,
+            section=book.section,
+            is_hidden=book.is_hidden,
+            image_url=book.image_url
         )
