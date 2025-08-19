@@ -46,8 +46,8 @@ class BookUseCase:
             raise BookNotFoundException
         return BookOutput.from_entity(book)
 
-    async def find_books(self, book_ids: list[str] | None = None) -> list[BookOutput]:
-        books = await self.book_repository.find_all(book_ids)
+    async def find_books(self) -> list[BookOutput]:
+        books = await self.book_repository.find_all()
         if not books:
             raise BooksNotFoundException
         return [BookOutput.from_entity(book) for book in books]
