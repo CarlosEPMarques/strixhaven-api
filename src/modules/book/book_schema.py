@@ -21,7 +21,7 @@ class BookCreateInput(BaseModel):
         
 class BookUpdateInput(BaseModel):
     title: str | None = Field(default=None, examples=['The Lord of The Rings'])
-    summary: str = Field(examples=['In an age long past, in a corner of the world, there lived a quiet people called Hobbits.'])
+    summary: str | None = Field(default=None, examples=['In an age long past, in a corner of the world, there lived a quiet people called Hobbits.'])
     section: str | None = Field(default=None, examples=['Fantasy'])
     is_hidden: bool | None = Field(default=None, examples=[False])
     image_url: str | None = Field(default=None, examples=['https://lordoftherings-image.com'])
