@@ -32,7 +32,7 @@ class BookTitle:
     
     def __post_init__(self) -> None:
         if not isinstance(self.value, str) or not re.match(r'^[\p{L}\p{N}\s.,!?\'"-]{2,100}$', self.value):
-            raise BookInvalidTitleException
+            raise BookInvalidTitleException(title=self.value)
 
 @dataclass(frozen=True)
 class BookSummary:
@@ -40,7 +40,7 @@ class BookSummary:
     
     def __post_init__(self) -> None:
         if not isinstance(self.value, str) or not (10 <= len(self.value) <= 5000):
-            raise BookInvalidSummaryException
+            raise BookInvalidSummaryException(summary=self.value)
 
 @dataclass(frozen=True)
 class BookSection:
@@ -48,7 +48,7 @@ class BookSection:
     
     def __post_init__(self) -> None:
         if not isinstance(self.value, str) or not re.match(r'^[\p{L}\p{N}\s.,!?\'"-]{2,100}$', self.value):
-            raise BookInvalidSectionException
+            raise BookInvalidSectionException(section=self.value)
 
 @dataclass(frozen=True)
 class BookIsHidden:
@@ -56,7 +56,7 @@ class BookIsHidden:
 
     def __post_init__(self) -> None:
         if not isinstance(self.value, bool):
-            raise BookInvalidIsHiddenException
+            raise BookInvalidIsHiddenException(is_hidden=self.value)
     
 @dataclass(frozen=True)
 class BookImageUrl:
@@ -64,7 +64,7 @@ class BookImageUrl:
     
     def __post_init__(self) -> None:
         if not isinstance(self.value, str):
-            raise BookInvalidImageUrlException
+            raise BookInvalidImageUrlException(image_url=self.value)
 
         if not re.match(r'^https?://[^\s/$.?#].[^\s]*$', self.value):
-            raise BookInvalidImageUrlException
+            raise BookInvalidImageUrlException(image_url=self.value)
