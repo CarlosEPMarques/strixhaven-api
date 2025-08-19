@@ -25,8 +25,8 @@ class BookInvalidSectionException(HTTPException):
 class BookInvalidIsHiddenException(HTTPException):
     status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    def __init__(self, section: str):
-        detail = f'Invalid Is Hidden: {section}'
+    def __init__(self, is_hidden: str):
+        detail = f'Invalid Is Hidden: {is_hidden}'
         super().__init__(self.status_code, detail=detail)
 
 class BookInvalidImageUrlException(HTTPException):
