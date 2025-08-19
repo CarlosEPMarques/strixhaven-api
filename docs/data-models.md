@@ -272,17 +272,6 @@
 | constitution       | INT          |                                 | Constitution       |
 | intelligence       | INT          |                                 | Intelligence       |
 
----
-
-### `sessions`
-
-| Column      | Type      | Constraints   | Description                  |
-| ----------- | --------- | ------------- | ---------------------------- |
-| session\_id | TEXT      | PRIMARY KEY   | Unique session identifier    |
-| user\_id    | UUID      | NOT NULL      | Reference to the user        |
-| created\_at | TIMESTAMP | DEFAULT NOW() | Session creation timestamp   |
-| expires\_at | TIMESTAMP | NOT NULL      | Session expiration timestamp |
-
 ## Mermaid Diagram
 
 erDiagram
@@ -296,13 +285,6 @@ erDiagram
         string password
         enum role
         text avatar_url
-    }
-
-    SESSIONS {
-        string session_id PK
-        uuid user_id FK
-        timestamp created_at
-        timestamp expires_at
     }
 
     %% =========================
@@ -511,7 +493,6 @@ erDiagram
     USERS ||--o{ NOTES : "writes"
     USERS ||--o{ NPC_NOTES : "writes"
     USERS ||--o{ EVENT_NOTES : "writes"
-    USERS ||--o{ SESSIONS : "owns"
 
     COLLEGES ||--o{ CLASSES : "offers"
     COLLEGES ||--o{ PLAYER_CHARACTERS : "attended by"
