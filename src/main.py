@@ -16,14 +16,13 @@ from src.modules.npc import npc_router
 from src.modules.npc_note import npc_note_router
 from src.modules.npc_reputation import npc_reputation_router
 from src.modules.player_character import player_character_router
-from src.modules.store_item import store_item_router
 from src.modules.store import store_router
+from src.modules.store_item import store_item_router
 from src.modules.user import user_router
-
-from src.settings.server.fastapi import app
 from src.settings.jwt import jwt_middleware
+from src.settings.server.fastapi import app
 
-app.middleware("http")(jwt_middleware)
+app.middleware('http')(jwt_middleware)
 
 routers: list[APIRouter] = [
     book_router,
@@ -44,13 +43,15 @@ routers: list[APIRouter] = [
     player_character_router,
     store_item_router,
     store_router,
-    user_router
+    user_router,
 ]
 routers.sort(key=lambda router: router.prefix)
 
+
 def sort_routes_by_path(router: APIRouter) -> None:
-    router.routes.sort(key=lambda route: route.path) # type: ignore[attr-defined]
-    
+    router.routes.sort(key=lambda route: route.path)  # type: ignore[attr-defined]
+
+
 for router in routers:
     sort_routes_by_path(router)
     app.include_router(router)

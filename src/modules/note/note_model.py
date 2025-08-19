@@ -1,31 +1,34 @@
-from uuid import UUID
 from datetime import datetime
-from sqlalchemy.orm import Mapped, mapped_column
+from uuid import UUID
+
+from sqlalchemy import ForeignKey, func, text
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from sqlalchemy.types import Text, Boolean, DateTime as DateTimeType
-from sqlalchemy import text, func, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.types import Boolean, Text
+from sqlalchemy.types import DateTime as DateTimeType
+
 from src.settings.database.sqlalchemy import Base
 
 
 class NoteModel(Base):
-    __tablename__ = "notes"
+    __tablename__ = 'notes'
 
     id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         primary_key=True,
-        server_default=text("gen_random_uuid()"),
+        server_default=text('gen_random_uuid()'),
     )
     author_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey('users.id', ondelete='CASCADE'),
         nullable=False,
     )
     content: Mapped[str] = mapped_column(Text, nullable=False)
     is_master_only: Mapped[bool] = mapped_column(
-        Boolean, server_default=text("FALSE"), nullable=False
+        Boolean, server_default=text('FALSE'), nullable=False
     )
     is_privative: Mapped[bool] = mapped_column(
-        Boolean, server_default=text("FALSE"), nullable=False
+        Boolean, server_default=text('FALSE'), nullable=False
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTimeType(timezone=True), server_default=func.now()

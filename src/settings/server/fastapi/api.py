@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from src.settings.server import api_settings
 
 app = FastAPI(

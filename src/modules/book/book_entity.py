@@ -1,14 +1,16 @@
 from __future__ import annotations
+
 import uuid
+
 from asyncpg.pgproto import pgproto
 
 from .book_value_object import (
     BookID,
-    BookTitle,
-    BookSummary,
-    BookSection,
-    BookIsHidden,
     BookImageUrl,
+    BookIsHidden,
+    BookSection,
+    BookSummary,
+    BookTitle,
 )
 
 
@@ -50,7 +52,7 @@ class Book:
         return self._section.value
 
     @property
-    def is_hidden(self) -> str:
+    def is_hidden(self) -> bool:
         return self._is_hidden.value
 
     @property
@@ -79,9 +81,9 @@ class Book:
             'summary': self.summary,
             'section': self.section,
             'is_hidden': self.is_hidden,
-            'image_url': self.image_url
+            'image_url': self.image_url,
         }
-        
+
     @staticmethod
     def from_document(document: dict) -> Book:
         return Book(
@@ -92,7 +94,7 @@ class Book:
             is_hidden=BookIsHidden(document['is_hidden']),
             image_url=BookImageUrl(document['image_url']),
         )
-        
+
     @staticmethod
     def create(
         title: BookTitle,

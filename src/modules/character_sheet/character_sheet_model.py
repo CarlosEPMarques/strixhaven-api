@@ -1,23 +1,25 @@
-from uuid import UUID
 from datetime import datetime
-from sqlalchemy.orm import Mapped, mapped_column
+from uuid import UUID
+
+from sqlalchemy import Float, ForeignKey, Integer, Text, func, text
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from sqlalchemy import text, ForeignKey, Integer, Float, Text, func
-from src.settings.database.sqlalchemy import Base
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import DateTime as DateTimeType
+
+from src.settings.database.sqlalchemy import Base
 
 
 class CharacterSheetModel(Base):
-    __tablename__ = "character_sheet"
+    __tablename__ = 'character_sheet'
 
     id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         primary_key=True,
-        server_default=text("gen_random_uuid()"),
+        server_default=text('gen_random_uuid()'),
     )
     character_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
-        ForeignKey("player_characters.id", ondelete="CASCADE"),
+        ForeignKey('player_characters.id', ondelete='CASCADE'),
         nullable=False,
     )
     strength: Mapped[int] = mapped_column(Integer, nullable=True)

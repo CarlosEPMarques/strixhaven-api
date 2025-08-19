@@ -19,6 +19,7 @@ dependencies = [
     "python-jose[cryptography]>=3.5.0",
     "regex>=2025.7.34",
     "sqlalchemy>=2.0.41",
+    "types-cachetools>=6.1.0.20250717",
     "uvicorn>=0.35.0",
 ]
 
