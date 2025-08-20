@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from asyncpg.pgproto import pgproto
 
 from .calendar_note_value_object import (
     CalendarNoteDescription,
+    CalendarNoteGameDatetime,
     CalendarNoteID,
     CalendarNoteIsExam,
     CalendarNoteTitle,
-    CalendarNoteGameDatetime
 )
 
 
@@ -50,7 +50,7 @@ class CalendarNote:
         return self._game_datetime.value
 
     @property
-    def is_exam(self) -> str:
+    def is_exam(self) -> bool:
         return self._is_exam.value
 
     def update_title(self, new_title: CalendarNoteTitle) -> None:

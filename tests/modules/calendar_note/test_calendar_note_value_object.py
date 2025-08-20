@@ -1,4 +1,5 @@
 from datetime import datetime
+
 import pytest
 
 from src.modules.calendar_note.calendar_note_exception import (
@@ -79,9 +80,9 @@ def test_calendar_note_description_constructor_should_raise_exception(descriptio
     'game_datetime', ['2024-12-01T12:30:00Z', '2023-12-21T12:30:00Z', '2027-04-30T12:30:00Z']
 )
 def test_calendar_note_game_datetime_constructor_should_create_instance(game_datetime: str) -> None:
-    game_datetime = datetime.fromisoformat(game_datetime.replace('Z', '+00:00'))
-    calendar_note_game_datetime = CalendarNoteGameDatetime(game_datetime)
-    assert calendar_note_game_datetime.value == game_datetime
+    calendar_game_datetime: datetime = datetime.fromisoformat(game_datetime)
+    calendar_note_game_datetime = CalendarNoteGameDatetime(calendar_game_datetime)
+    assert calendar_note_game_datetime.value == calendar_game_datetime
 
 
 @pytest.mark.parametrize(
@@ -91,7 +92,7 @@ def test_calendar_note_game_datetime_constructor_should_create_instance(game_dat
 )
 def test_calendar_note_game_datetime_constructor_should_raise_exception(game_datetime: str) -> None:
     with pytest.raises(CalendarNoteInvalidDatetimeException):
-        CalendarNoteGameDatetime(game_datetime)
+        CalendarNoteGameDatetime(game_datetime)  # type: ignore[arg-type]
 
 
 # Is Exam

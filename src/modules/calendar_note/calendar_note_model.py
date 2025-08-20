@@ -11,10 +11,10 @@ from sqlalchemy.types import DateTime as DateTimeType
 from src.modules.calendar_note.calendar_note_entity import CalendarNote
 from src.modules.calendar_note.calendar_note_value_object import (
     CalendarNoteDescription,
+    CalendarNoteGameDatetime,
     CalendarNoteID,
     CalendarNoteIsExam,
     CalendarNoteTitle,
-    CalendarNoteGameDatetime
 )
 from src.settings.database.sqlalchemy import Base
 

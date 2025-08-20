@@ -28,7 +28,7 @@ async def test_create_calendar_note_usecase(
     input_data = CalendarNoteCreateInput(
         title=calendar_note.title,
         description=calendar_note.description,
-        game_datetime=str(calendar_note.game_datetime),
+        game_datetime=calendar_note.game_datetime,
         is_exam=calendar_note.is_exam,
     )
     created_calendar_note = await calendar_note_usecase.create_calendar_note(input_data)
@@ -75,7 +75,7 @@ async def test_update_calendar_note_game_datetime_usecase(
 ) -> None:
     calendar_note_repository.find = AsyncMock(return_value=calendar_note)
     calendar_note_repository.update = AsyncMock()
-    updated_game_datetime = datetime.fromisoformat('2020-05-14T18:00:00Z'.replace('Z', '+00:00'))
+    updated_game_datetime = datetime.fromisoformat('2020-05-14T18:00:00Z')
     updated_calendar_note = await calendar_note_usecase.update_calendar_note(
         calendar_note_id=calendar_note.id,
         input_data=CalendarNoteUpdateInput(game_datetime=updated_game_datetime),

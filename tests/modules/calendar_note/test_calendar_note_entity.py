@@ -1,10 +1,11 @@
 from datetime import datetime
+
 from src.modules.calendar_note.calendar_note_entity import CalendarNote
 from src.modules.calendar_note.calendar_note_value_object import (
     CalendarNoteDescription,
+    CalendarNoteGameDatetime,
     CalendarNoteIsExam,
     CalendarNoteTitle,
-    CalendarNoteGameDatetime
 )
 
 
@@ -30,7 +31,7 @@ def test_update_calendar_note_description(calendar_note: CalendarNote) -> None:
 
 
 def test_update_calendar_note_game_datetime(calendar_note: CalendarNote) -> None:
-    updated_game_datetime = datetime.fromisoformat('2020-05-14T18:00:00Z'.replace('Z', '+00:00'))
+    updated_game_datetime = datetime.fromisoformat('2020-05-14T18:00:00Z')
     calendar_note.update_game_datetime(CalendarNoteGameDatetime(updated_game_datetime))
     game_datetime = calendar_note.game_datetime.strftime('%Y-%m-%dT%H:%M:%S')
     assert game_datetime == '2020-05-14T18:00:00'

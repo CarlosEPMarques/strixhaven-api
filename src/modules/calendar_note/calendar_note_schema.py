@@ -7,9 +7,9 @@ from pydantic import BaseModel, Field
 from src.modules.calendar_note.calendar_note_entity import CalendarNote
 from src.modules.calendar_note.calendar_note_value_object import (
     CalendarNoteDescription,
+    CalendarNoteGameDatetime,
     CalendarNoteIsExam,
     CalendarNoteTitle,
-    CalendarNoteGameDatetime
 )
 
 

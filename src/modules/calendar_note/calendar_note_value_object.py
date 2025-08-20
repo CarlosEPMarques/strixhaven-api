@@ -65,6 +65,7 @@ class CalendarNoteGameDatetime:
     def __str__(self) -> str:
         return self.value.strftime('%Y-%m-%dT%H:%M:%S+00:00')
 
+
 @dataclass(frozen=True)
 class CalendarNoteIsExam:
     value: bool

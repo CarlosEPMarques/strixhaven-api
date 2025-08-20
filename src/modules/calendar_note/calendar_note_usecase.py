@@ -13,9 +13,9 @@ from src.modules.calendar_note.calendar_note_schema import (
 )
 from src.modules.calendar_note.calendar_note_value_object import (
     CalendarNoteDescription,
+    CalendarNoteGameDatetime,
     CalendarNoteIsExam,
     CalendarNoteTitle,
-    CalendarNoteGameDatetime
 )
 
 
@@ -63,7 +63,7 @@ class CalendarNoteUseCase:
             raise CalendarNoteNotFoundException
         return CalendarNoteOutput.from_entity(cast(CalendarNote, calendar_note))
 
-    async def find_calendar_note_by_month(self, calendar_month: int) -> CalendarNoteOutput:
+    async def find_calendar_note_by_month(self, calendar_month: int) -> list[CalendarNoteOutput]:
         calendar_notes = await self.calendar_note_repository.find_by_game_month(
             calendar_month=calendar_month
         )
