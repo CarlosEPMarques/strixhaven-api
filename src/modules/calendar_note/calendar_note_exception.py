@@ -28,6 +28,14 @@ class CalendarNoteInvalidDatetimeException(HTTPException):
         super().__init__(self.status_code, detail=detail)
 
 
+class CalendarNoteInvalidIsExamException(HTTPException):
+    status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+
+    def __init__(self, is_exam: bool) -> None:
+        detail = f'Invalid Is Exam: {is_exam}'
+        super().__init__(self.status_code, detail=detail)
+
+
 class CalendarNoteNotFoundException(HTTPException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = 'The calendar note you specified does not exist.'
