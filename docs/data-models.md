@@ -4,7 +4,23 @@
 
 ### `user_role`
 
--   Possible values: `'DM'`, `'PLAYER'`
+- Possible values: `'DM'`, `'PLAYER'`
+
+### `news_category`
+
+- Possible values: `'EVENT'`, `'ANNOUNCEMENT'`, `'UPDATE'`, `'OTHER'`
+
+### `calendar_event_type`
+
+- Possible values: `'CLASS'`, `'EXAM'`, `'HOLIDAY'`, `'OTHER'`
+
+### `store_item_rarity`
+
+- Possible values: `'COMMON'`, `'UNCOMMON'`, `'RARE'`, `'EPIC'`, `'LEGENDARY'`
+
+### `npc_occupation`
+
+- Possible values: `'PROFESSOR'`, `'STUDENT'`, `'MERCHANT'`, `'OTHER'`
 
 ---
 
@@ -12,29 +28,31 @@
 
 ### `users`
 
-| Column     | Type         | Constraints      | Description                |
-| ---------- | ------------ | ---------------- | -------------------------- |
-| id         | UUID         | PK               | Unique user identifier     |
-| name       | VARCHAR(100) | NOT NULL         | User's name                |
-| email      | VARCHAR(100) | UNIQUE, NOT NULL | User's email               |
-| password   | VARCHAR(255) | NOT NULL         | User's password            |
-| role       | `user_role`  | NOT NULL         | User's role (DM or PLAYER) |
-| avatar_url | TEXT         |                  | URL to user's avatar image |
-| created_at | TIMESTAMP    | DEFAULT NOW()    | Creation timestamp         |
-| updated_at | TIMESTAMP    | DEFAULT NOW()    | Update timestamp           |
+| Column     | Type        | Constraints      | Description                |
+| ---------- | ----------- | ---------------- | -------------------------- |
+| id         | UUID        | PK               | Unique user identifier     |
+| name       | VARCHAR(100)| NOT NULL         | User's name                |
+| email      | VARCHAR(100)| UNIQUE, NOT NULL | User's email               |
+| password   | VARCHAR(255)| NOT NULL         | User's password            |
+| role       | `user_role` | NOT NULL         | User's role                |
+| avatar_url | TEXT        |                  | URL to user's avatar image |
+| created_at | TIMESTAMP   | DEFAULT NOW()    | Creation timestamp         |
+| updated_at | TIMESTAMP   | DEFAULT NOW()    | Update timestamp           |
 
 ---
 
 ### `colleges`
 
-| Column      | Type         | Constraints   | Description          |
-| ----------- | ------------ | ------------- | -------------------- |
-| id          | UUID         | PK            | College identifier   |
-| name        | VARCHAR(100) | NOT NULL      | College name         |
-| description | TEXT         |               | College description  |
-| image_url   | TEXT         |               | URL to college image |
-| created_at  | TIMESTAMP    | DEFAULT NOW() | Creation timestamp   |
-| updated_at  | TIMESTAMP    | DEFAULT NOW() | Update timestamp     |
+| Column       | Type         | Constraints   | Description          |
+| ------------ | ------------ | ------------- | -------------------- |
+| id           | UUID         | PK            | College identifier   |
+| name         | VARCHAR(100) | NOT NULL      | College name         |
+| description  | TEXT         |               | College description  |
+| image_url    | TEXT         |               | URL to college image |
+| founded_year | INT          |               | Year college founded |
+| traditions   | JSONB        |               | College traditions   |
+| created_at   | TIMESTAMP    | DEFAULT NOW() | Creation timestamp   |
+| updated_at   | TIMESTAMP    | DEFAULT NOW() | Update timestamp     |
 
 ---
 
@@ -93,66 +111,57 @@
 
 ### `news`
 
-| Column        | Type         | Constraints   | Description        |
-| ------------- | ------------ | ------------- | ------------------ |
-| id            | UUID         | PK            | News identifier    |
-| headline      | VARCHAR(100) | NOT NULL      | News headline      |
-| body          | TEXT         |               | News body          |
-| game_datetime | TIMESTAMP    |               | In-game date/time  |
-| image_url     | TEXT         |               | News image URL     |
-| created_at    | TIMESTAMP    | DEFAULT NOW() | Creation timestamp |
-| updated_at    | TIMESTAMP    | DEFAULT NOW() | Update timestamp   |
-
----
-
-### `stores`
-
-| Column      | Type         | Constraints   | Description        |
-| ----------- | ------------ | ------------- | ------------------ |
-| id          | UUID         | PK            | Store identifier   |
-| name        | VARCHAR(100) | NOT NULL      | Store name         |
-| location    | VARCHAR(100) |               | Store location     |
-| description | TEXT         |               | Store description  |
-| image_url   | TEXT         |               | Store image URL    |
-| created_at  | TIMESTAMP    | DEFAULT NOW() | Creation timestamp |
-| updated_at  | TIMESTAMP    | DEFAULT NOW() | Update timestamp   |
+| Column        | Type           | Constraints   | Description        |
+| ------------- | -------------- | ------------- | ------------------ |
+| id            | UUID           | PK            | News identifier    |
+| headline      | VARCHAR(100)   | NOT NULL      | News headline      |
+| body          | TEXT           |               | News body          |
+| category      | `news_category`|               | News category      |
+| game_datetime | TIMESTAMP      |               | In-game date/time  |
+| image_url     | TEXT           |               | News image URL     |
+| created_at    | TIMESTAMP      | DEFAULT NOW() | Creation timestamp |
+| updated_at    | TIMESTAMP      | DEFAULT NOW() | Update timestamp   |
 
 ---
 
 ### `calendar_events`
 
-| Column        | Type         | Constraints   | Description        |
-| ------------- | ------------ | ------------- | ------------------ |
-| id            | UUID         | PK            | Event identifier   |
-| title         | VARCHAR(100) | NOT NULL      | Event title        |
-| description   | TEXT         |               | Event description  |
-| game_datetime | TIMESTAMP    |               | In-game date/time  |
-| is_exam       | BOOLEAN      | DEFAULT FALSE | Exam flag          |
-| created_at    | TIMESTAMP    | DEFAULT NOW() | Creation timestamp |
-| updated_at    | TIMESTAMP    | DEFAULT NOW() | Update timestamp   |
+| Column        | Type                 | Constraints   | Description        |
+| ------------- | ------------------- | ------------- | ------------------ |
+| id            | UUID                 | PK            | Event identifier   |
+| title         | VARCHAR(100)         | NOT NULL      | Event title        |
+| description   | TEXT                 |               | Event description  |
+| game_datetime | TIMESTAMP            |               | In-game date/time  |
+| is_exam       | BOOLEAN              | DEFAULT FALSE | Exam flag          |
+| event_type    | `calendar_event_type`|               | Type of event      |
+| created_at    | TIMESTAMP            | DEFAULT NOW() | Creation timestamp |
+| updated_at    | TIMESTAMP            | DEFAULT NOW() | Update timestamp   |
 
 ---
 
 ### `npcs`
 
-| Column       | Type         | Constraints                             | Description        |
-| ------------ | ------------ | --------------------------------------- | ------------------ |
-| id           | UUID         | PK                                      | NPC identifier     |
-| name         | VARCHAR(100) | NOT NULL                                | NPC name           |
-| college_id   | UUID         | FK to `colleges(id)` ON DELETE SET NULL | NPC's college      |
-| college_year | INT          |                                         | NPC's college year |
-| image_url    | TEXT         |                                         | NPC image URL      |
-| bio          | TEXT         |                                         | NPC biography      |
-| is_visible   | BOOLEAN      | DEFAULT TRUE                            | Visibility flag    |
-| created_at   | TIMESTAMP    | DEFAULT NOW()                           | Creation timestamp |
-| updated_at   | TIMESTAMP    | DEFAULT NOW()                           | Update timestamp   |
+| Column       | Type               | Constraints                             | Description          |
+| ------------ | ----------------- | --------------------------------------- | ------------------  |
+| id           | UUID               | PK                                      | NPC identifier       |
+| name         | VARCHAR(100)       | NOT NULL                                | NPC name             |
+| college_id   | UUID               | FK to `colleges(id)` ON DELETE SET NULL | NPC's college        |
+| college_year | INT                |                                         | NPC's college year   |
+| image_url    | TEXT               |                                         | NPC image URL        |
+| bio          | TEXT               |                                         | NPC biography        |
+| occupation   | `npc_occupation`   |                                         | NPC occupation       |
+| personality  | JSONB              |                                         | NPC personality      |
+| location     | VARCHAR(100)       |                                         | NPC location         |
+| is_visible   | BOOLEAN            | DEFAULT TRUE                            | Visibility flag      |
+| created_at   | TIMESTAMP          | DEFAULT NOW()                           | Creation timestamp   |
+| updated_at   | TIMESTAMP          | DEFAULT NOW()                           | Update timestamp     |
 
 ---
 
 ### `player_characters`
 
 | Column       | Type         | Constraints                             | Description          |
-| ------------ | ------------ | --------------------------------------- | -------------------- |
+| ------------ | ------------ | --------------------------------------- | --------------------|
 | id           | UUID         | PK                                      | Character identifier |
 | user_id      | UUID         | FK to `users(id)` ON DELETE CASCADE     | Owning user          |
 | name         | VARCHAR(100) | NOT NULL                                | Character name       |
@@ -160,6 +169,10 @@
 | college_year | INT          |                                         | College year         |
 | college_id   | UUID         | FK to `colleges(id)` ON DELETE SET NULL | Character's college  |
 | level        | INT          |                                         | Character level      |
+| goals        | TEXT         |                                         | Character goals      |
+| hobbies      | JSONB        |                                         | Character hobbies    |
+| allies       | JSONB        |                                         | Allies               |
+| enemies      | JSONB        |                                         | Enemies              |
 | created_at   | TIMESTAMP    | DEFAULT NOW()                           | Creation timestamp   |
 | updated_at   | TIMESTAMP    | DEFAULT NOW()                           | Update timestamp     |
 
@@ -179,216 +192,16 @@
 
 ---
 
-### `grades`
+### `class_professors`
 
-| Column       | Type      | Constraints                                     | Description                   |
-| ------------ | --------- | ----------------------------------------------- | ----------------------------- |
-| id           | UUID      | PK                                              | Grade identifier              |
-| character_id | UUID      | FK to `player_characters(id)` ON DELETE CASCADE | Character                     |
-| class_id     | UUID      | FK to `classes(id)` ON DELETE CASCADE           | Class                         |
-| score        | INT       |                                                 | Grade score                   |
-| created_at   | TIMESTAMP | DEFAULT NOW()                                   | Creation timestamp            |
-| updated_at   | TIMESTAMP | DEFAULT NOW()                                   | Update timestamp              |
-| UNIQUE       |           | (character_id, class_id)                        | One grade per character/class |
+| Column   | Type | Constraints                         | Description        |
+| -------- | ---- | ----------------------------------- | ------------------ |
+| class_id | UUID | FK to `classes(id)` ON DELETE CASCADE | Associated class  |
+| npc_id   | UUID | FK to `npcs(id)` ON DELETE CASCADE    | Professor NPC     |
+
+**Primary Key:** (class_id, npc_id)
 
 ---
-
-### `quests`
-
-| Column          | Type         | Constraints                         | Description               |
-| --------------- | ------------ | ----------------------------------- | ------------------------- |
-| id              | UUID         | PK                                  | Quest identifier          |
-| title           | VARCHAR(150) | NOT NULL                            | Quest title               |
-| description     | TEXT         |                                     | Quest description         |
-| responsible_npc | UUID         | FK to `npcs(id)` ON DELETE SET NULL | NPC responsible for quest |
-| active          | BOOLEAN      | DEFAULT TRUE                        | Active flag               |
-| rewards         | JSONB        |                                     | Quest rewards             |
-| expire_date     | TIMESTAMP    |                                     | Quest expiration date     |
-| created_at      | TIMESTAMP    | DEFAULT NOW()                       | Creation timestamp        |
-| updated_at      | TIMESTAMP    | DEFAULT NOW()                       | Update timestamp          |
-
----
-
-### `store_items`
-
-| Column      | Type          | Constraints                          | Description           |
-| ----------- | ------------- | ------------------------------------ | --------------------- |
-| id          | UUID          | PK                                   | Store item identifier |
-| store_id    | UUID          | FK to `stores(id)` ON DELETE CASCADE | Associated store      |
-| name        | VARCHAR(100)  | NOT NULL                             | Item name             |
-| description | TEXT          |                                      | Item description      |
-| price       | DECIMAL(10,2) |                                      | Item price            |
-| image_url   | TEXT          |                                      | Item image URL        |
-| created_at  | TIMESTAMP     | DEFAULT NOW()                        | Creation timestamp    |
-| updated_at  | TIMESTAMP     | DEFAULT NOW()                        | Update timestamp      |
-
----
-
-### `character_sheet`
-
-| Column             | Type      | Constraints                                             | Description                |
-| ------------------ | --------- | ------------------------------------------------------- | -------------------------- |
-| id                 | UUID      | PK                                                      | Character sheet identifier |
-| character_id       | UUID      | UNIQUE, FK to `player_characters(id)` ON DELETE CASCADE | Associated character       |
-| strength           | INT       |                                                         | Strength                   |
-| dexterity          | INT       |                                                         | Dexterity                  |
-| constitution       | INT       |                                                         | Constitution               |
-| intelligence       | INT       |                                                         | Intelligence               |
-| wisdom             | INT       |                                                         | Wisdom                     |
-| charisma           | INT       |                                                         | Charisma                   |
-| proficiency_bonus  | INT       |                                                         | Proficiency bonus          |
-| armor_class        | INT       |                                                         | Armor class                |
-| initiative         | INT       |                                                         | Initiative                 |
-| speed              | INT       |                                                         | Movement speed             |
-| max_hit_points     | INT       |                                                         | Maximum hit points         |
-| current_hit_points | INT       |                                                         | Current hit points         |
-| temp_hit_points    | INT       |                                                         | Temporary hit points       |
-| hit_dice_total     | INT       |                                                         | Total hit dice             |
-| hit_dice_current   | INT       |                                                         | Current hit dice           |
-| save_str           | INT       |                                                         | Strength saving throw      |
-| save_dex           | INT       |                                                         | Dexterity saving throw     |
-| save_con           | INT       |                                                         | Constitution saving throw  |
-| save_int           | INT       |                                                         | Intelligence saving throw  |
-| save_wis           | INT       |                                                         | Wisdom saving throw        |
-| save_cha           | INT       |                                                         | Charisma saving throw      |
-| skills             | JSONB     |                                                         | Skills                     |
-| background         | TEXT      |                                                         | Background                 |
-| race               | TEXT      |                                                         | Race                       |
-| alignment          | TEXT      |                                                         | Alignment                  |
-| experience_points  | INT       |                                                         | Experience points          |
-| languages          | JSONB     |                                                         | Languages                  |
-| features_traits    | JSONB     |                                                         | Features and traits        |
-| proficiencies      | JSONB     |                                                         | Proficiencies              |
-| description        | TEXT      |                                                         | Description                |
-| created_at         | TIMESTAMP | DEFAULT NOW()                                           | Creation timestamp         |
-| updated_at         | TIMESTAMP | DEFAULT NOW()                                           | Update timestamp           |
-
----
-
-### `spells`
-
-| Column      | Type         | Constraints   | Description        |
-| ----------- | ------------ | ------------- | ------------------ |
-| id          | UUID         | PK            | Spell identifier   |
-| name        | VARCHAR(100) | NOT NULL      | Spell name         |
-| level       | INT          |               | Spell level        |
-| cast_modes  | JSONB        |               | Casting modes      |
-| description | TEXT         |               | Spell description  |
-| created_at  | TIMESTAMP    | DEFAULT NOW() | Creation timestamp |
-| updated_at  | TIMESTAMP    | DEFAULT NOW() | Update timestamp   |
-
----
-
-### `stories`
-
-| Column     | Type      | Constraints   | Description        |
-| ---------- | --------- | ------------- | ------------------ |
-| id         | UUID      | PK            | Story identifier   |
-| title      | TEXT      |               | Story title        |
-| content    | TEXT      |               | Story content      |
-| created_at | TIMESTAMP | DEFAULT NOW() | Creation timestamp |
-| updated_at | TIMESTAMP | DEFAULT NOW() | Update timestamp   |
-
----
-
-### `student_scoreboard`
-
-| Column          | Type         | Constraints   | Description         |
-| --------------- | ------------ | ------------- | ------------------- |
-| id              | UUID         | PK            | Scoreboard entry ID |
-| ranking         | INT          |               | Student ranking     |
-| student_name    | VARCHAR(100) |               | Student name        |
-| student_college | VARCHAR(100) |               | Student's college   |
-| created_at      | TIMESTAMP    | DEFAULT NOW() | Creation timestamp  |
-| updated_at      | TIMESTAMP    | DEFAULT NOW() | Update timestamp    |
-
----
-
-### `inventory_items`
-
-| Column       | Type      | Constraints                                     | Description               |
-| ------------ | --------- | ----------------------------------------------- | ------------------------- |
-| id           | UUID      | PK                                              | Inventory item ID         |
-| character_id | UUID      | FK to `player_characters(id)` ON DELETE CASCADE | Owner character           |
-| item_id      | UUID      | FK to `store_items(id)` ON DELETE SET NULL      | Item reference            |
-| amount       | INT       |                                                 | Quantity                  |
-| metadata     | JSONB     |                                                 | Additional metadata       |
-| created_at   | TIMESTAMP | DEFAULT NOW()                                   | Creation timestamp        |
-| updated_at   | TIMESTAMP | DEFAULT NOW()                                   | Update timestamp          |
-| UNIQUE       |           | (character_id, item_id)                         | Unique item per character |
-
----
-
-### `npcs_reputation`
-
-| Column       | Type      | Constraints                                     | Description                  |
-| ------------ | --------- | ----------------------------------------------- | ---------------------------- |
-| id           | UUID      | PK                                              | Reputation record ID         |
-| character_id | UUID      | FK to `player_characters(id)` ON DELETE CASCADE | Character                    |
-| npc_id       | UUID      | FK to `npcs(id)` ON DELETE CASCADE              | NPC                          |
-| score        | INT       |                                                 | Reputation score             |
-| created_at   | TIMESTAMP | DEFAULT NOW()                                   | Creation timestamp           |
-| updated_at   | TIMESTAMP | DEFAULT NOW()                                   | Update timestamp             |
-| UNIQUE       |           | (character_id, npc_id)                          | One record per NPC/character |
-
----
-
-### `notes`
-
-| Column         | Type         | Constraints                         | Description        |
-| -------------- | ------------ | ----------------------------------- | ------------------ |
-| id             | UUID         | PK                                  | Note identifier    |
-| author_id      | UUID         | FK to `users(id)` ON DELETE CASCADE | Note author        |
-| title          | VARCHAR(150) |                                     | Note title         |
-| content        | TEXT         | NOT NULL                            | Note content       |
-| is_master_only | BOOLEAN      | DEFAULT FALSE                       | Master-only flag   |
-| created_at     | TIMESTAMP    | DEFAULT NOW()                       | Creation timestamp |
-| updated_at     | TIMESTAMP    | DEFAULT NOW()                       | Update timestamp   |
-
----
-
-### `character_notes`
-
-| Column       | Type | Constraints                                     | Description |
-| ------------ | ---- | ----------------------------------------------- | ----------- |
-| note_id      | UUID | FK to `notes(id)` ON DELETE CASCADE             | Note        |
-| character_id | UUID | FK to `player_characters(id)` ON DELETE CASCADE | Character   |
-
-**Primary Key:** (note_id, character_id)
-
----
-
-### `npc_notes`
-
-| Column    | Type | Constraints                         | Description |
-| --------- | ---- | ----------------------------------- | ----------- |
-| note_id   | UUID | FK to `notes(id)` ON DELETE CASCADE | Note        |
-| npc_id    | UUID | FK to `npcs(id)` ON DELETE CASCADE  | NPC         |
-| author_id | UUID | FK to `users(id)` ON DELETE CASCADE | Author      |
-
-**Primary Key:** (note_id, npc_id)
-
----
-
-### `npc_visibility`
-
-| Column    | Type | Constraints                         | Description            |
-| --------- | ---- | ----------------------------------- | ---------------------- |
-| npc_id    | UUID | FK to `npcs(id)` ON DELETE CASCADE  | NPC identifier         |
-| player_id | UUID | FK to `users(id)` ON DELETE CASCADE | Player with visibility |
-
-**Primary Key:** (npc_id, player_id)
-
----
-
-### `character_classes`
-
-| Column       | Type | Constraints                                     | Description  |
-| ------------ | ---- | ----------------------------------------------- | ------------ |
-| character_id | UUID | FK to `player_characters(id)` ON DELETE CASCADE | Character ID |
-| class_id     | UUID | FK to `classes(id)` ON DELETE CASCADE           | Class ID     |
-
-**Primary Key:** (character_id, class_id)
 
 ## Mermaid Diagram
 
@@ -410,13 +223,15 @@ erDiagram
     }
 
     %% =========================
-    %% CAMPAIGN STRUCTURE
+    %% COLLEGES & CAMPAIGN STRUCTURE
     %% =========================
     COLLEGES {
         uuid id PK
         string name
         text description
         text image_url
+        int founded_year
+        jsonb traditions
         timestamp created_at
         timestamp updated_at
     }
@@ -439,6 +254,10 @@ erDiagram
         int college_year
         uuid college_id FK
         int level
+        text goals
+        jsonb hobbies
+        jsonb allies
+        jsonb enemies
         timestamp created_at
         timestamp updated_at
     }
@@ -499,6 +318,9 @@ erDiagram
         string name
         text description
         decimal price
+        enum rarity
+        int durability
+        text lore
         text image_url
         timestamp created_at
         timestamp updated_at
@@ -524,6 +346,9 @@ erDiagram
         int college_year
         text image_url
         text bio
+        enum occupation
+        jsonb personality
+        string location
         boolean is_visible
         timestamp created_at
         timestamp updated_at
@@ -567,20 +392,18 @@ erDiagram
         uuid author_id FK
     }
 
+    %% =========================
+    %% CALENDAR EVENTS
+    %% =========================
     CALENDAR_EVENTS {
         uuid id PK
         string title
         text description
         timestamp game_datetime
         boolean is_exam
+        enum event_type
         timestamp created_at
         timestamp updated_at
-    }
-
-    EVENT_NOTES {
-        uuid note_id FK
-        uuid event_id FK
-        uuid author_id FK
     }
 
     %% =========================
@@ -658,6 +481,7 @@ erDiagram
         uuid id PK
         string headline
         text body
+        enum category
         timestamp game_datetime
         text image_url
         timestamp created_at
@@ -702,7 +526,6 @@ erDiagram
     USERS ||--o{ PLAYER_CHARACTERS : "has"
     USERS ||--o{ NOTES : "writes"
     USERS ||--o{ NPC_NOTES : "writes"
-    USERS ||--o{ EVENT_NOTES : "writes"
 
     COLLEGES ||--o{ CLASSES : "offers"
     COLLEGES ||--o{ PLAYER_CHARACTERS : "attended by"
@@ -724,12 +547,12 @@ erDiagram
     NPCS ||--o{ QUESTS : "responsible for"
     NPCS ||--o{ NPC_VISIBILITY : "visible to"
 
-    CALENDAR_EVENTS ||--o{ EVENT_NOTES : "linked to"
+    CALENDAR_EVENTS ||--o{ NOTES : "linked to"
 
     NOTES ||--o{ CHARACTER_NOTES : "relates to"
     NOTES ||--o{ NPC_NOTES : "relates to"
-    NOTES ||--o{ EVENT_NOTES : "relates to"
 
     STORES ||--o{ STORE_ITEMS : "sells"
     STORE_ITEMS ||--o{ INVENTORY_ITEMS : "owned by"
+
 ```
