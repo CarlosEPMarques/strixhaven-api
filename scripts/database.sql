@@ -1,4 +1,8 @@
 CREATE TYPE user_role AS ENUM ('DM', 'PLAYER');
+CREATE TYPE news_category AS ENUM ('EVENT', 'ANNOUNCEMENT', 'UPDATE', 'OTHER');
+CREATE TYPE calendar_event_type AS ENUM ('CLASS', 'EXAM', 'HOLIDAY', 'OTHER');
+CREATE TYPE store_item_rarity AS ENUM ('COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY');
+CREATE TYPE npc_occupation AS ENUM ('PROFESSOR', 'STUDENT', 'MERCHANT', 'OTHER');
 
 CREATE TABLE users (
     id UUID PRIMARY KEY,
@@ -16,6 +20,8 @@ CREATE TABLE colleges (
     name VARCHAR(100) NOT NULL,
     description TEXT,
     image_url TEXT,
+    founded_year INT,
+    traditions JSONB,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -65,6 +71,7 @@ CREATE TABLE news (
     id UUID PRIMARY KEY,
     headline VARCHAR(100) NOT NULL,
     body TEXT,
+    category news_category,
     game_datetime TIMESTAMP,
     image_url TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
@@ -81,12 +88,13 @@ CREATE TABLE stores (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE calendar_notes (
+CREATE TABLE calendar_events (
     id UUID PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     description TEXT,
     game_datetime TIMESTAMP,
     is_exam BOOLEAN DEFAULT FALSE,
+    event_type calendar_event_type,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -98,6 +106,9 @@ CREATE TABLE npcs (
     college_year INT,
     image_url TEXT,
     bio TEXT,
+    occupation npc_occupation,
+    personality JSONB,
+    location VARCHAR(100),
     is_visible BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
@@ -111,6 +122,10 @@ CREATE TABLE player_characters (
     college_year INT,
     college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
     level INT,
+    goals TEXT,
+    hobbies JSONB,
+    allies JSONB,
+    enemies JSONB,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -123,6 +138,12 @@ CREATE TABLE classes (
     image_url TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE class_professors (
+    class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
+    npc_id UUID REFERENCES npcs(id) ON DELETE CASCADE,
+    PRIMARY KEY (class_id, npc_id)
 );
 
 CREATE TABLE grades (
@@ -153,9 +174,20 @@ CREATE TABLE store_items (
     name VARCHAR(100) NOT NULL,
     description TEXT,
     price DECIMAL(10,2),
+    rarity store_item_rarity,
+    durability INT,
+    lore TEXT,
     image_url TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE item_identifications (
+    id UUID PRIMARY KEY,
+    item_id UUID REFERENCES store_items(id) ON DELETE CASCADE,
+    character_id UUID REFERENCES player_characters(id) ON DELETE SET NULL,
+    discovered_at TIMESTAMP DEFAULT NOW(),
+    notes TEXT
 );
 
 CREATE TABLE character_sheet (
@@ -206,12 +238,55 @@ CREATE TABLE spells (
 );
 
 CREATE TABLE stories (
-    id,
-    title,
-    content,
+    id UUID PRIMARY KEY,
+    title VARCHAR(150),
+    content TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
-)
+);
+
+CREATE TABLE clubs (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    college_id UUID REFERENCES colleges(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE character_clubs (
+    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
+    club_id UUID REFERENCES clubs(id) ON DELETE CASCADE,
+    PRIMARY KEY (character_id, club_id)
+);
+
+CREATE TABLE pets (
+    id UUID PRIMARY KEY,
+    owner_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    species VARCHAR(100),
+    description TEXT,
+    abilities JSONB,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE tournaments (
+    id UUID PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    event_date TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE tournament_results (
+    tournament_id UUID REFERENCES tournaments(id) ON DELETE CASCADE,
+    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
+    position INT,
+    reward JSONB,
+    PRIMARY KEY (tournament_id, character_id)
+);
 
 CREATE TABLE student_scoreboard (
     id UUID PRIMARY KEY,
@@ -265,7 +340,6 @@ CREATE TABLE npc_notes (
     author_id UUID REFERENCES users(id) ON DELETE CASCADE,
     PRIMARY KEY (note_id, npc_id)
 );
-
 
 CREATE TABLE npc_visibility (
     npc_id UUID REFERENCES npcs(id) ON DELETE CASCADE,
