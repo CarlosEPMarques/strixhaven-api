@@ -532,7 +532,7 @@
 | Column        | Type      | Constraints | Description         |
 | ------------- | --------- | ----------- | ------------------- |
 | id            | BIGSERIAL | PK          | Internal identifier |
-| external\_id  | UUID      | UNIQUE      | External identifier |
+| class\_id     | BIGSERIAL | FK          |                     |
 | character\_id | BIGSERIAL | FK          |                     |
 
 **Primary Key:** (character\_id, class\_id)
