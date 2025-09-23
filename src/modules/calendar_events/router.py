@@ -4,13 +4,13 @@ from fastapi.param_functions import Depends
 from fastapi.routing import APIRouter
 from starlette import status
 
-from src.modules.calendar_note.calendar_note_injection import calendar_note_usecase_factory
-from src.modules.calendar_note.calendar_note_schema import (
+from src.modules.calendar_events.injection import calendar_note_usecase_factory
+from src.modules.calendar_events.schema import (
     CalendarNoteCreateInput,
     CalendarNoteOutput,
     CalendarNoteUpdateInput,
 )
-from src.modules.calendar_note.calendar_note_usecase import CalendarNoteUseCase
+from src.modules.calendar_events.usecase import CalendarNoteUseCase
 
 router = APIRouter(prefix='/calendar-notes', tags=['Calendar-Notes'])
 

@@ -4,8 +4,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from src.modules.calendar_note.calendar_note_entity import CalendarNote
-from src.modules.calendar_note.calendar_note_value_object import (
+from src.modules.calendar_events.entity import CalendarNote
+from src.modules.calendar_events.object import (
     CalendarNoteDescription,
     CalendarNoteGameDatetime,
     CalendarNoteIsExam,

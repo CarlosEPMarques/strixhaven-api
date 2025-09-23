@@ -3,8 +3,8 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import delete, select
 
-from src.modules.calendar_note.calendar_note_entity import CalendarNote
-from src.modules.calendar_note.calendar_note_model import CalendarNoteModel
+from src.modules.calendar_events.entity import CalendarNote
+from src.modules.calendar_events.model import CalendarNoteModel
 
 
 class CalendarNoteRepository:
@@ -17,7 +17,7 @@ class CalendarNoteRepository:
         await self.session.commit()
 
     async def update(self, calendar_note: CalendarNote) -> None:
-        query = select(CalendarNoteModel).where(CalendarNoteModel.id == calendar_note.id)
+        query = select(CalendarNoteModel).where(CalendarNoteModel.external_id == calendar_note.id)
         result = await self.session.execute(query)
         calendar_note_model = result.scalars().one()
         calendar_note_model.title = calendar_note.title
@@ -27,13 +27,13 @@ class CalendarNoteRepository:
         await self.session.commit()
 
     async def delete(self, calendar_note: CalendarNote) -> None:
-        query = delete(CalendarNoteModel).where(CalendarNoteModel.id == calendar_note.id)
+        query = delete(CalendarNoteModel).where(CalendarNoteModel.external_id == calendar_note.id)
         await self.session.execute(query)
         await self.session.commit()
 
     async def find(self, calendar_note_id: str) -> CalendarNote | None:
         if calendar_note_id:
-            query = select(CalendarNoteModel).where(CalendarNoteModel.id == calendar_note_id)
+            query = select(CalendarNoteModel).where(CalendarNoteModel.external_id == calendar_note_id)
 
         try:
             result = await self.session.execute(query)

@@ -8,8 +8,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import Boolean, String, Text
 from sqlalchemy.types import DateTime as DateTimeType
 
-from src.modules.calendar_note.calendar_note_entity import CalendarNote
-from src.modules.calendar_note.calendar_note_value_object import (
+from src.modules.calendar_events.entity import CalendarNote
+from src.modules.calendar_events.object import (
     CalendarNoteDescription,
     CalendarNoteGameDatetime,
     CalendarNoteID,
@@ -20,9 +20,9 @@ from src.settings.database.sqlalchemy import Base
 
 
 class CalendarNoteModel(Base):
-    __tablename__ = 'calendar_notes'
+    __tablename__ = 'calendar_events'
 
-    id: Mapped[UUID] = mapped_column(primary_key=True)
+    external_id: Mapped[UUID] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
     game_datetime: Mapped[datetime] = mapped_column(DateTimeType(timezone=True), nullable=True)
@@ -30,7 +30,7 @@ class CalendarNoteModel(Base):
 
     def to_entity(self) -> CalendarNote:
         return CalendarNote(
-            id=CalendarNoteID(str(self.id)),
+            id=CalendarNoteID(str(self.external_id)),
             title=CalendarNoteTitle(self.title),
             description=CalendarNoteDescription(self.description),
             game_datetime=CalendarNoteGameDatetime(self.game_datetime),
@@ -40,7 +40,7 @@ class CalendarNoteModel(Base):
     @staticmethod
     def from_entity(calendar_note: CalendarNote) -> CalendarNoteModel:
         return CalendarNoteModel(
-            id=calendar_note.id,
+            external_id=calendar_note.id,
             title=calendar_note.title,
             description=calendar_note.description,
             game_datetime=calendar_note.game_datetime,

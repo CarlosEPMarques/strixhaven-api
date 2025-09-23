@@ -5,7 +5,7 @@ from datetime import datetime
 
 from asyncpg.pgproto import pgproto
 
-from .calendar_note_value_object import (
+from .object import (
     CalendarNoteDescription,
     CalendarNoteGameDatetime,
     CalendarNoteID,

@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 
 import regex as re
 
-from src.modules.calendar_note.calendar_note_exception import (
+from src.modules.calendar_events.exception import (
     CalendarNoteInvalidDatetimeException,
     CalendarNoteInvalidDescriptionException,
     CalendarNoteInvalidIsExamException,

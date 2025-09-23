@@ -1,17 +1,17 @@
 from typing import cast
 
-from src.modules.calendar_note.calendar_note_entity import CalendarNote
-from src.modules.calendar_note.calendar_note_exception import (
+from src.modules.calendar_events.entity import CalendarNote
+from src.modules.calendar_events.exception import (
     CalendarNoteNotFoundException,
     CalendarNotesNotFoundException,
 )
-from src.modules.calendar_note.calendar_note_repository import CalendarNoteRepository
-from src.modules.calendar_note.calendar_note_schema import (
+from src.modules.calendar_events.repository import CalendarNoteRepository
+from src.modules.calendar_events.schema import (
     CalendarNoteCreateInput,
     CalendarNoteOutput,
     CalendarNoteUpdateInput,
 )
-from src.modules.calendar_note.calendar_note_value_object import (
+from src.modules.calendar_events.object import (
     CalendarNoteDescription,
     CalendarNoteGameDatetime,
     CalendarNoteIsExam,

@@ -1,8 +1,8 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.modules.calendar_note.calendar_note_repository import CalendarNoteRepository
-from src.modules.calendar_note.calendar_note_usecase import CalendarNoteUseCase
+from src.modules.calendar_events.repository import CalendarNoteRepository
+from src.modules.calendar_events.usecase import CalendarNoteUseCase
 from src.settings.database.sqlalchemy.database import get_session
 
 
