@@ -8,7 +8,7 @@ from src.modules.calendar_events.exception import (
     CalendarNoteInvalidIsExamException,
     CalendarNoteInvalidTitleException,
 )
-from src.modules.calendar_events.object import (
+from src.modules.calendar_events.value_object import (
     CalendarNoteDescription,
     CalendarNoteGameDatetime,
     CalendarNoteID,
