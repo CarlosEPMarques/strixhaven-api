@@ -1,7 +1,7 @@
 from fastapi.routing import APIRouter
 
 from src.modules.book import book_router
-from src.modules.calendar_note import calendar_note_router
+from src.modules.calendar_events import calendar_note_router
 from src.modules.character_note import character_note_router
 from src.modules.character_sheet import character_sheet_router
 from src.modules.classes import class_router
