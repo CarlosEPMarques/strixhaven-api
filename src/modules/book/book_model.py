@@ -21,7 +21,7 @@ from src.settings.database.sqlalchemy import Base
 class BookModel(Base):
     __tablename__ = 'books'
 
-    id: Mapped[UUID] = mapped_column(primary_key=True)
+    external_id: Mapped[UUID] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     summary: Mapped[str] = mapped_column(Text, nullable=True)
     section: Mapped[str] = mapped_column(String(255), nullable=True)
@@ -30,7 +30,7 @@ class BookModel(Base):
 
     def to_entity(self) -> Book:
         return Book(
-            id=BookID(str(self.id)),
+            id=BookID(str(self.external_id)),
             title=BookTitle(self.title),
             summary=BookSummary(self.summary),
             section=BookSection(self.section),
@@ -41,7 +41,7 @@ class BookModel(Base):
     @staticmethod
     def from_entity(book: Book) -> BookModel:
         return BookModel(
-            id=book.id,
+            external_id=book.id,
             title=book.title,
             summary=book.summary,
             section=book.section,

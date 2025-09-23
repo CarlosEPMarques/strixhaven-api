@@ -16,7 +16,7 @@ class BookRepository:
         await self.session.commit()
 
     async def update(self, book: Book) -> None:
-        query = select(BookModel).where(BookModel.id == book.id)
+        query = select(BookModel).where(BookModel.external_id == book.id)
         result = await self.session.execute(query)
         book_model = result.scalars().one()
         book_model.title = book.title
@@ -27,13 +27,13 @@ class BookRepository:
         await self.session.commit()
 
     async def delete(self, book: Book) -> None:
-        query = delete(BookModel).where(BookModel.id == book.id)
+        query = delete(BookModel).where(BookModel.external_id == book.id)
         await self.session.execute(query)
         await self.session.commit()
 
     async def find(self, book_id: str) -> Book | None:
         if book_id:
-            query = select(BookModel).where(BookModel.id == book_id)
+            query = select(BookModel).where(BookModel.external_id == book_id)
 
         try:
             result = await self.session.execute(query)

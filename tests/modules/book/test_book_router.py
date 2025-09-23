@@ -85,5 +85,5 @@ async def test_get_books(
     output_ids = [book['id'] for book in output]
     assert str(book_id) in output_ids
     assert str(book_2_id) in output_ids
-    await client.delete(f'/calendar-notes/{book_id}')
-    await client.delete(f'/calendar-notes/{book_2_id}')
+    await client.delete(f'/books/{book_id}')
+    await client.delete(f'/books/{book_2_id}')

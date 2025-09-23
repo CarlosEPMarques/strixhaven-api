@@ -5,7 +5,7 @@ from src.modules.book.book_model import BookModel
 def test_book_model_from_entity(book: Book) -> None:
     book_model = BookModel.from_entity(book)
 
-    assert book_model.id == book.id
+    assert book_model.external_id == book.id
     assert book_model.title == book.title
     assert book_model.summary == book.summary
     assert book_model.section == book.section
