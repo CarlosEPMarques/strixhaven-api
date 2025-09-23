@@ -1,6 +1,6 @@
-from src.modules.calendar_note.calendar_note_entity import CalendarNote
-from src.modules.calendar_note.calendar_note_repository import CalendarNoteRepository
-from src.modules.calendar_note.calendar_note_value_object import CalendarNoteTitle
+from src.modules.calendar_events.entity import CalendarNote
+from src.modules.calendar_events.repository import CalendarNoteRepository
+from src.modules.calendar_events.object import CalendarNoteTitle
 
 
 async def test_crud_calendar_note(

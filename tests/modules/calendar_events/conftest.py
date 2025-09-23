@@ -3,10 +3,10 @@ from datetime import datetime
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.modules.calendar_note.calendar_note_entity import CalendarNote
-from src.modules.calendar_note.calendar_note_repository import CalendarNoteRepository
-from src.modules.calendar_note.calendar_note_usecase import CalendarNoteUseCase
-from src.modules.calendar_note.calendar_note_value_object import (
+from src.modules.calendar_events.entity import CalendarNote
+from src.modules.calendar_events.repository import CalendarNoteRepository
+from src.modules.calendar_events.usecase import CalendarNoteUseCase
+from src.modules.calendar_events.value_object import (
     CalendarNoteDescription,
     CalendarNoteGameDatetime,
     CalendarNoteIsExam,

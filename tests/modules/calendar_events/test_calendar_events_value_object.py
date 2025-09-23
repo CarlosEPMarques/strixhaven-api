@@ -2,13 +2,13 @@ from datetime import datetime
 
 import pytest
 
-from src.modules.calendar_note.calendar_note_exception import (
+from src.modules.calendar_events.exception import (
     CalendarNoteInvalidDatetimeException,
     CalendarNoteInvalidDescriptionException,
     CalendarNoteInvalidIsExamException,
     CalendarNoteInvalidTitleException,
 )
-from src.modules.calendar_note.calendar_note_value_object import (
+from src.modules.calendar_events.object import (
     CalendarNoteDescription,
     CalendarNoteGameDatetime,
     CalendarNoteID,

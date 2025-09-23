@@ -9,7 +9,7 @@ from sqlalchemy.types import Boolean, String, Text
 from sqlalchemy.types import DateTime as DateTimeType
 
 from src.modules.calendar_events.entity import CalendarNote
-from src.modules.calendar_events.object import (
+from src.modules.calendar_events.value_object import (
     CalendarNoteDescription,
     CalendarNoteGameDatetime,
     CalendarNoteID,

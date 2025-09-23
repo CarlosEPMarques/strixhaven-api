@@ -1,7 +1,7 @@
 from httpx import AsyncClient
 from starlette import status
 
-from src.modules.calendar_note.calendar_note_entity import CalendarNote
+from src.modules.calendar_events.entity import CalendarNote
 
 
 async def test_crud_calendar_note(client: AsyncClient, calendar_note: CalendarNote) -> None:

@@ -3,18 +3,18 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from src.modules.calendar_note.calendar_note_entity import CalendarNote
-from src.modules.calendar_note.calendar_note_exception import (
+from src.modules.calendar_events.entity import CalendarNote
+from src.modules.calendar_events.exception import (
     CalendarNoteNotFoundException,
     CalendarNotesNotFoundException,
 )
-from src.modules.calendar_note.calendar_note_repository import CalendarNoteRepository
-from src.modules.calendar_note.calendar_note_schema import (
+from src.modules.calendar_events.repository import CalendarNoteRepository
+from src.modules.calendar_events.schema import (
     CalendarNoteCreateInput,
     CalendarNoteOutput,
     CalendarNoteUpdateInput,
 )
-from src.modules.calendar_note.calendar_note_usecase import CalendarNoteUseCase
+from src.modules.calendar_events.usecase import CalendarNoteUseCase
 
 
 async def test_create_calendar_note_usecase(
