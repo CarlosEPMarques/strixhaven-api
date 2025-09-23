@@ -1,5 +1,5 @@
-from src.modules.book.book_entity import Book
-from src.modules.book.book_model import BookModel
+from src.modules.book.entity import Book
+from src.modules.book.model import BookModel
 
 
 def test_book_model_from_entity(book: Book) -> None:

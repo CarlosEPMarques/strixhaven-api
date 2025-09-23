@@ -2,11 +2,11 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from src.modules.book.book_entity import Book
-from src.modules.book.book_exception import BookNotFoundException, BooksNotFoundException
-from src.modules.book.book_repository import BookRepository
-from src.modules.book.book_schema import BookCreateInput, BookOutput, BookUpdateInput
-from src.modules.book.book_usecase import BookUseCase
+from src.modules.book.entity import Book
+from src.modules.book.exception import BookNotFoundException, BooksNotFoundException
+from src.modules.book.repository import BookRepository
+from src.modules.book.schema import BookCreateInput, BookOutput, BookUpdateInput
+from src.modules.book.usecase import BookUseCase
 
 
 async def test_create_book_usecase(

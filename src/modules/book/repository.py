@@ -2,8 +2,8 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import delete, select
 
-from src.modules.book.book_entity import Book
-from src.modules.book.book_model import BookModel
+from src.modules.book.entity import Book
+from src.modules.book.model import BookModel
 
 
 class BookRepository:

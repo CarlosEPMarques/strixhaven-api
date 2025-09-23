@@ -1,10 +1,10 @@
 from typing import cast
 
-from src.modules.book.book_entity import Book
-from src.modules.book.book_exception import BookNotFoundException, BooksNotFoundException
-from src.modules.book.book_repository import BookRepository
-from src.modules.book.book_schema import BookCreateInput, BookOutput, BookUpdateInput
-from src.modules.book.book_value_object import (
+from src.modules.book.entity import Book
+from src.modules.book.exception import BookNotFoundException, BooksNotFoundException
+from src.modules.book.repository import BookRepository
+from src.modules.book.schema import BookCreateInput, BookOutput, BookUpdateInput
+from src.modules.book.value_object import (
     BookImageUrl,
     BookIsHidden,
     BookSection,

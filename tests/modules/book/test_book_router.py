@@ -1,7 +1,7 @@
 from httpx import AsyncClient
 from starlette import status
 
-from src.modules.book.book_entity import Book
+from src.modules.book.entity import Book
 
 
 async def test_crud_book(client: AsyncClient, book: Book) -> None:

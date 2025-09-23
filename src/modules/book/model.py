@@ -6,8 +6,8 @@ from sqlalchemy import text
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import Boolean, String, Text
 
-from src.modules.book.book_entity import Book
-from src.modules.book.book_value_object import (
+from src.modules.book.entity import Book
+from src.modules.book.value_object import (
     BookID,
     BookImageUrl,
     BookIsHidden,

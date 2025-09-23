@@ -4,9 +4,9 @@ from fastapi.param_functions import Depends
 from fastapi.routing import APIRouter
 from starlette import status
 
-from src.modules.book.book_injection import book_usecase_factory
-from src.modules.book.book_schema import BookCreateInput, BookOutput, BookUpdateInput
-from src.modules.book.book_usecase import BookUseCase
+from src.modules.book.injection import book_usecase_factory
+from src.modules.book.schema import BookCreateInput, BookOutput, BookUpdateInput
+from src.modules.book.usecase import BookUseCase
 
 router = APIRouter(prefix='/books', tags=['Books'])
 

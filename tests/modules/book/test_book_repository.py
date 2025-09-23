@@ -1,6 +1,6 @@
-from src.modules.book.book_entity import Book
-from src.modules.book.book_repository import BookRepository
-from src.modules.book.book_value_object import BookTitle
+from src.modules.book.entity import Book
+from src.modules.book.repository import BookRepository
+from src.modules.book.value_object import BookTitle
 
 
 async def test_crud_book(book_repository: BookRepository, book: Book) -> None:

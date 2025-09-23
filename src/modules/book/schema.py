@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from src.modules.book.book_entity import Book
-from src.modules.book.book_value_object import (
+from src.modules.book.entity import Book
+from src.modules.book.value_object import (
     BookImageUrl,
     BookIsHidden,
     BookSection,

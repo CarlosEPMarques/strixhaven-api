@@ -4,7 +4,7 @@ import uuid
 
 from asyncpg.pgproto import pgproto
 
-from .book_value_object import (
+from .value_object import (
     BookID,
     BookImageUrl,
     BookIsHidden,

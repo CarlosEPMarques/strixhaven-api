@@ -5,7 +5,7 @@ from uuid import UUID, uuid4
 
 import regex as re
 
-from src.modules.book.book_exception import (
+from src.modules.book.exception import (
     BookInvalidImageUrlException,
     BookInvalidIsHiddenException,
     BookInvalidSectionException,

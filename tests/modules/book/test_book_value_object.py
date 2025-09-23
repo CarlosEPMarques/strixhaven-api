@@ -1,13 +1,13 @@
 import pytest
 
-from src.modules.book.book_exception import (
+from src.modules.book.exception import (
     BookInvalidImageUrlException,
     BookInvalidIsHiddenException,
     BookInvalidSectionException,
     BookInvalidSummaryException,
     BookInvalidTitleException,
 )
-from src.modules.book.book_value_object import (
+from src.modules.book.value_object import (
     BookID,
     BookImageUrl,
     BookIsHidden,
