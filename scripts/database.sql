@@ -5,7 +5,8 @@ CREATE TYPE store_item_rarity AS ENUM ('COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LE
 CREATE TYPE npc_occupation AS ENUM ('PROFESSOR', 'STUDENT', 'MERCHANT', 'OTHER');
 
 CREATE TABLE users (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -16,7 +17,8 @@ CREATE TABLE users (
 );
 
 CREATE TABLE colleges (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     image_url TEXT,
@@ -27,7 +29,8 @@ CREATE TABLE colleges (
 );
 
 CREATE TABLE books (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
     title VARCHAR(100) NOT NULL,
     summary TEXT,
     section VARCHAR(100),
@@ -39,13 +42,15 @@ CREATE TABLE books (
 );
 
 CREATE TABLE maps (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
     title VARCHAR(100) NOT NULL,
     image_url TEXT
 );
 
 CREATE TABLE monsters (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
     name VARCHAR(100) NOT NULL,
     size VARCHAR(50),
     alignment VARCHAR(50),
@@ -68,7 +73,8 @@ CREATE TABLE monsters (
 );
 
 CREATE TABLE news (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
     headline VARCHAR(100) NOT NULL,
     body TEXT,
     category news_category,
@@ -79,7 +85,8 @@ CREATE TABLE news (
 );
 
 CREATE TABLE stores (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
     name VARCHAR(100) NOT NULL,
     location VARCHAR(100),
     description TEXT,
@@ -89,7 +96,8 @@ CREATE TABLE stores (
 );
 
 CREATE TABLE calendar_events (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
     title VARCHAR(100) NOT NULL,
     description TEXT,
     game_datetime TIMESTAMP,
@@ -100,9 +108,10 @@ CREATE TABLE calendar_events (
 );
 
 CREATE TABLE npcs (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
     name VARCHAR(100) NOT NULL,
-    college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
+    college_id BIGINT REFERENCES colleges(internal_id) ON DELETE SET NULL,
     college_year INT,
     image_url TEXT,
     bio TEXT,
@@ -115,12 +124,13 @@ CREATE TABLE npcs (
 );
 
 CREATE TABLE player_characters (
-    id UUID PRIMARY KEY,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
+    user_id BIGINT REFERENCES users(internal_id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     image_url TEXT,
     college_year INT,
-    college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
+    college_id BIGINT REFERENCES colleges(internal_id) ON DELETE SET NULL,
     level INT,
     goals TEXT,
     hobbies JSONB,
@@ -131,25 +141,26 @@ CREATE TABLE player_characters (
 );
 
 CREATE TABLE classes (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
+    external_id UUID UNIQUE,
     name VARCHAR(100) NOT NULL,
     description TEXT,
-    college_id UUID REFERENCES colleges(id) ON DELETE SET NULL,
+    college_id BIGINT REFERENCES colleges(internal_id) ON DELETE SET NULL,
     image_url TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE class_professors (
-    class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
-    npc_id UUID REFERENCES npcs(id) ON DELETE CASCADE,
+    class_id BIGINT REFERENCES classes(internal_id) ON DELETE CASCADE,
+    npc_id BIGINT REFERENCES npcs(internal_id) ON DELETE CASCADE,
     PRIMARY KEY (class_id, npc_id)
 );
 
 CREATE TABLE grades (
-    id UUID PRIMARY KEY,
-    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
-    class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
+    internal_id BIGSERIAL PRIMARY KEY,
+    character_id BIGINT REFERENCES player_characters(internal_id) ON DELETE CASCADE,
+    class_id BIGINT REFERENCES classes(internal_id) ON DELETE CASCADE,
     score INT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
@@ -157,10 +168,10 @@ CREATE TABLE grades (
 );
 
 CREATE TABLE quests (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
     title VARCHAR(150) NOT NULL,
     description TEXT,
-    responsible_npc UUID REFERENCES npcs(id) ON DELETE SET NULL,
+    responsible_npc BIGINT REFERENCES npcs(internal_id) ON DELETE SET NULL,
     active BOOLEAN DEFAULT TRUE,
     rewards JSONB,
     expire_date TIMESTAMP,
@@ -169,8 +180,8 @@ CREATE TABLE quests (
 );
 
 CREATE TABLE store_items (
-    id UUID PRIMARY KEY,
-    store_id UUID REFERENCES stores(id) ON DELETE CASCADE,
+    internal_id BIGSERIAL PRIMARY KEY,
+    store_id BIGINT REFERENCES stores(internal_id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     price DECIMAL(10,2),
@@ -183,16 +194,16 @@ CREATE TABLE store_items (
 );
 
 CREATE TABLE item_identifications (
-    id UUID PRIMARY KEY,
-    item_id UUID REFERENCES store_items(id) ON DELETE CASCADE,
-    character_id UUID REFERENCES player_characters(id) ON DELETE SET NULL,
+    internal_id BIGSERIAL PRIMARY KEY,
+    item_id BIGINT REFERENCES store_items(internal_id) ON DELETE CASCADE,
+    character_id BIGINT REFERENCES player_characters(internal_id) ON DELETE SET NULL,
     discovered_at TIMESTAMP DEFAULT NOW(),
     notes TEXT
 );
 
 CREATE TABLE character_sheet (
-    id UUID PRIMARY KEY,
-    character_id UUID UNIQUE REFERENCES player_characters(id) ON DELETE CASCADE,
+    internal_id BIGSERIAL PRIMARY KEY,
+    character_id BIGINT UNIQUE REFERENCES player_characters(internal_id) ON DELETE CASCADE,
     strength INTEGER,
     dexterity INTEGER,
     constitution INTEGER,
@@ -228,7 +239,7 @@ CREATE TABLE character_sheet (
 );
 
 CREATE TABLE spells (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     level INT,
     cast_modes JSONB,
@@ -238,7 +249,7 @@ CREATE TABLE spells (
 );
 
 CREATE TABLE stories (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
     title VARCHAR(150),
     content TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
@@ -246,23 +257,23 @@ CREATE TABLE stories (
 );
 
 CREATE TABLE clubs (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
-    college_id UUID REFERENCES colleges(id) ON DELETE CASCADE,
+    college_id BIGINT REFERENCES colleges(internal_id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE character_clubs (
-    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
-    club_id UUID REFERENCES clubs(id) ON DELETE CASCADE,
+    character_id BIGINT REFERENCES player_characters(internal_id) ON DELETE CASCADE,
+    club_id BIGINT REFERENCES clubs(internal_id) ON DELETE CASCADE,
     PRIMARY KEY (character_id, club_id)
 );
 
 CREATE TABLE pets (
-    id UUID PRIMARY KEY,
-    owner_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
+    internal_id BIGSERIAL PRIMARY KEY,
+    owner_id BIGINT REFERENCES player_characters(internal_id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     species VARCHAR(100),
     description TEXT,
@@ -272,7 +283,7 @@ CREATE TABLE pets (
 );
 
 CREATE TABLE tournaments (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     description TEXT,
     event_date TIMESTAMP,
@@ -281,15 +292,15 @@ CREATE TABLE tournaments (
 );
 
 CREATE TABLE tournament_results (
-    tournament_id UUID REFERENCES tournaments(id) ON DELETE CASCADE,
-    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
+    tournament_id BIGINT REFERENCES tournaments(internal_id) ON DELETE CASCADE,
+    character_id BIGINT REFERENCES player_characters(internal_id) ON DELETE CASCADE,
     position INT,
     reward JSONB,
     PRIMARY KEY (tournament_id, character_id)
 );
 
 CREATE TABLE student_scoreboard (
-    id UUID PRIMARY KEY,
+    internal_id BIGSERIAL PRIMARY KEY,
     ranking INT,
     student_name VARCHAR(100),
     student_college VARCHAR(100),
@@ -298,9 +309,9 @@ CREATE TABLE student_scoreboard (
 );
 
 CREATE TABLE inventory_items (
-    id UUID PRIMARY KEY,
-    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
-    item_id UUID REFERENCES store_items(id) ON DELETE SET NULL,
+    internal_id BIGSERIAL PRIMARY KEY,
+    character_id BIGINT REFERENCES player_characters(internal_id) ON DELETE CASCADE,
+    item_id BIGINT REFERENCES store_items(internal_id) ON DELETE SET NULL,
     amount INT,
     metadata JSONB,
     created_at TIMESTAMP DEFAULT NOW(),
@@ -309,9 +320,9 @@ CREATE TABLE inventory_items (
 );
 
 CREATE TABLE npcs_reputation (
-    id UUID PRIMARY KEY,
-    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
-    npc_id UUID REFERENCES npcs(id) ON DELETE CASCADE,
+    internal_id BIGSERIAL PRIMARY KEY,
+    character_id BIGINT REFERENCES player_characters(internal_id) ON DELETE CASCADE,
+    npc_id BIGINT REFERENCES npcs(internal_id) ON DELETE CASCADE,
     score INT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
@@ -319,8 +330,8 @@ CREATE TABLE npcs_reputation (
 );
 
 CREATE TABLE notes (
-    id UUID PRIMARY KEY,
-    author_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    internal_id BIGSERIAL PRIMARY KEY,
+    author_id BIGINT REFERENCES users(internal_id) ON DELETE CASCADE,
     title VARCHAR(150),
     content TEXT NOT NULL,
     is_master_only BOOLEAN DEFAULT FALSE,
@@ -329,26 +340,26 @@ CREATE TABLE notes (
 );
 
 CREATE TABLE character_notes (
-    note_id UUID REFERENCES notes(id) ON DELETE CASCADE,
-    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
-    PRIMARY KEY (note_id, character_id)
+    character_id BIGINT REFERENCES player_characters(internal_id) ON DELETE CASCADE,
+    note_id BIGINT REFERENCES notes(internal_id) ON DELETE CASCADE,
+    PRIMARY KEY (character_id, note_id)
 );
 
 CREATE TABLE npc_notes (
-    note_id UUID REFERENCES notes(id) ON DELETE CASCADE,
-    npc_id UUID REFERENCES npcs(id) ON DELETE CASCADE,
-    author_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    PRIMARY KEY (note_id, npc_id)
+    npc_id BIGINT REFERENCES npcs(internal_id) ON DELETE CASCADE,
+    note_id BIGINT REFERENCES notes(internal_id) ON DELETE CASCADE,
+    author_id BIGINT REFERENCES users(internal_id) ON DELETE CASCADE,
+    PRIMARY KEY (npc_id, note_id)
 );
 
 CREATE TABLE npc_visibility (
-    npc_id UUID REFERENCES npcs(id) ON DELETE CASCADE,
-    player_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    npc_id BIGINT REFERENCES npcs(internal_id) ON DELETE CASCADE,
+    player_id BIGINT REFERENCES users(internal_id) ON DELETE CASCADE,
     PRIMARY KEY (npc_id, player_id)
 );
 
 CREATE TABLE character_classes (
-    character_id UUID REFERENCES player_characters(id) ON DELETE CASCADE,
-    class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
+    character_id BIGINT REFERENCES player_characters(internal_id) ON DELETE CASCADE,
+    class_id BIGINT REFERENCES classes(internal_id) ON DELETE CASCADE,
     PRIMARY KEY (character_id, class_id)
 );
