@@ -1,1 +1,1 @@
-from .class_router import router as class_router
+from .router import router as class_router

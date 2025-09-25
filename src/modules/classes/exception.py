@@ -54,3 +54,13 @@ class ClassesNotFoundException(HTTPException):
 
     def __str__(self) -> str:
         return self.detail
+
+class ClassAlreadyExistsException(HTTPException):
+    status_code = status.HTTP_409_CONFLICT
+    
+    def __init__(self, class_name: str):
+        detail = f'Class with name {class_name} already exists.'
+        super().__init__(status_code=self.status_code, detail=detail)
+    
+    def __str__(self) -> str:
+        return self.detail
